@@ -5,7 +5,6 @@ import com.project.app.dtos.transaction.TransactionDto;
 import com.project.app.exceptions.CannotPersistEntityException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +17,7 @@ import org.junit.Test;
  *
  * @author p.rafailov
  */
-public class TransactionDaoTestCase extends AbstractGenericDaoTestCase {
+public class TransactionDaoTestCase extends AbstractGenericDaoTestCase<TransactionDto> {
 
     private DefaultTransactionDao txDao;
 
@@ -111,9 +110,13 @@ public class TransactionDaoTestCase extends AbstractGenericDaoTestCase {
     }
 
     @Override
-    protected List<Long> getAllIds() {
-        List<Long> ids = txDao.loadAll().stream().map(tx -> tx.getId()).collect(Collectors.toList());
-        return ids;
+    protected List<TransactionDto> getRecords() {
+        return txDao.loadAll();
+    }
+
+    @Override
+    protected Long getDtoId(TransactionDto dto) {
+        return dto.getId();
     }
 
 }

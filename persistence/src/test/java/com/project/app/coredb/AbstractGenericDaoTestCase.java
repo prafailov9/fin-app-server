@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-public abstract class AbstractGenericDaoTestCase {
+public abstract class AbstractGenericDaoTestCase<T> {
 
     protected final static Logger LOGGER = Logger.getLogger(AbstractGenericDaoTestCase.class.getCanonicalName());
     private static final String PROPERTIES_PATH = "/db-test.properties";
@@ -47,6 +48,14 @@ public abstract class AbstractGenericDaoTestCase {
         return randomId;
     }
 
-    protected abstract List<Long> getAllIds();
+    protected List<Long> getAllIds() {
+        List<T> records = getRecords();
+        List<Long> ids = records.stream().map(t -> getDtoId(t)).collect(Collectors.toList());
+        return ids;
+    }
+
+    protected abstract List<T> getRecords();
+
+    protected abstract Long getDtoId(T dto);
 
 }

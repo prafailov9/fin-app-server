@@ -99,7 +99,7 @@ public class InstrumentConverterTestCase {
 //        InstrumentDto dto = (InstrumentDto) getInstrumentConverter().convertToDto(creditEntity);
 
         conv = factory.getConverter(creditEntity.getType());
-        InstrumentDto dto = (InstrumentDto) conv.convertToDto(creditEntity);
+        InstrumentDto dto = conv.convertToDto(creditEntity);
 
         assertNotNull(dto.getInstrumentName());
         assertNotNull(dto.getPaymentEndingDate());
@@ -116,7 +116,7 @@ public class InstrumentConverterTestCase {
 //        setInstrumentConverter(getMatcher().getConverter(depositEntity.getClass().getSimpleName()));
 //        InstrumentDto dto = (InstrumentDto) getInstrumentConverter().convertToDto(depositEntity);
         conv = factory.getConverter(depositEntity.getType());
-        InstrumentDto dto = (InstrumentDto) conv.convertToDto(depositEntity);
+        InstrumentDto dto = conv.convertToDto(depositEntity);
 
         assertNull(dto.getPrincipalFrequency());
         assertEquals(0.0, dto.getInterestRate(), 0.0);
@@ -128,7 +128,7 @@ public class InstrumentConverterTestCase {
 //        setInstrumentConverter(getMatcher().getConverter(shareEntity.getClass().getSimpleName()));
 //        InstrumentDto dto = (InstrumentDto) getInstrumentConverter().convertToDto(shareEntity);
         conv = factory.getConverter(shareEntity.getType());
-        InstrumentDto dto = (InstrumentDto) conv.convertToDto(shareEntity);
+        InstrumentDto dto = conv.convertToDto(shareEntity);
 
         assertNull(dto.getInterestFrequency());
         assertNull(dto.getPrincipalFrequency());

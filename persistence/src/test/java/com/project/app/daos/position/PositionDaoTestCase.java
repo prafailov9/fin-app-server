@@ -21,7 +21,7 @@ import org.junit.Test;
  *
  * @author p.rafailov
  */
-public class PositionDaoTestCase extends AbstractGenericDaoTestCase {
+public class PositionDaoTestCase extends AbstractGenericDaoTestCase<PositionDto> {
 
     private DefaultPositionDao posDao;
 
@@ -126,9 +126,13 @@ public class PositionDaoTestCase extends AbstractGenericDaoTestCase {
     }
 
     @Override
-    protected List<Long> getAllIds() {
-        List<Long> ids = posDao.loadAll().stream().map(pos -> pos.getId()).collect(toList());
-        return ids;
+    protected List<PositionDto> getRecords() {
+        return posDao.loadAll();
+    }
+
+    @Override
+    protected Long getDtoId(PositionDto dto) {
+        return dto.getId();
     }
 
 }

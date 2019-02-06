@@ -12,7 +12,6 @@ import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import static java.util.stream.Collectors.toList;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +24,7 @@ import org.junit.Test;
  *
  * @author Plamen
  */
-public class InstrumentDaoTestCase extends AbstractGenericDaoTestCase {
+public class InstrumentDaoTestCase extends AbstractGenericDaoTestCase<InstrumentDto> {
 
     private DefaultInstrumentDao insDao;
 
@@ -113,9 +112,13 @@ public class InstrumentDaoTestCase extends AbstractGenericDaoTestCase {
     }
 
     @Override
-    protected List<Long> getAllIds() {
-        List<Long> ids = insDao.loadAll().stream().map(ins -> ins.getId()).collect(toList());
-        return ids;
+    protected List<InstrumentDto> getRecords() {
+        return insDao.loadAll();
+    }
+
+    @Override
+    protected Long getDtoId(InstrumentDto dto) {
+        return dto.getId();
     }
 
 }
