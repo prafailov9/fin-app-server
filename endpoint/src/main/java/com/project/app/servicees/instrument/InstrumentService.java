@@ -1,4 +1,4 @@
-package com.project.app.resources.instrument;
+package com.project.app.servicees.instrument;
 
 import com.project.app.businesslogic.instrument.DefaultInstrumentBL;
 import com.project.app.businesslogic.instrument.InstrumentBL;
