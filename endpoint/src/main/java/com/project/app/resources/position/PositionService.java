@@ -21,11 +21,11 @@ import javax.ws.rs.core.MediaType;
 @Path("/positions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class PositionResource {
+public class PositionService {
 
     private final PositionBL positionBL;
 
-    public PositionResource() {
+    public PositionService() {
         this.positionBL = new DefaultPositionBL();
     }
 

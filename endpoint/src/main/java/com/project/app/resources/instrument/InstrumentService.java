@@ -21,11 +21,11 @@ import javax.ws.rs.core.MediaType;
 @Path("/instruments")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class InstrumentResource {
+public class InstrumentService {
 
     private final InstrumentBL instrumentBL;
 
-    public InstrumentResource() {
+    public InstrumentService() {
         this.instrumentBL = new DefaultInstrumentBL();
     }
 

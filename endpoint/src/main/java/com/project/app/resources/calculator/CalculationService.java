@@ -19,12 +19,12 @@ import javax.ws.rs.core.MediaType;
 @Path("/calculator")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class CalculationResource {
+public class CalculationService {
 
     private final PositionBL pbl;
     private final DefaultCalculationBL cbl;
 
-    public CalculationResource() {
+    public CalculationService() {
         pbl = new DefaultPositionBL();
         cbl = new DefaultCalculationBL();
     }
