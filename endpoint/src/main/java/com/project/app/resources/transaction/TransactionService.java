@@ -21,11 +21,11 @@ import javax.ws.rs.core.MediaType;
 @Path("/transactions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class TransactionResource {
+public class TransactionService {
 
     private final TransactionBL transactionBL;
 
-    public TransactionResource() {
+    public TransactionService() {
         this.transactionBL = new DefaultTransactionBL();
     }
 
