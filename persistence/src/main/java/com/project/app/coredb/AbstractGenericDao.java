@@ -61,11 +61,11 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
             if (Objects.isNull(entity) || Objects.isNull(getEntityId(entity))) {
                 throw new NoRecordFoundException();
             }
+            return entity;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Could not load a record with id=" + id + " from " + tableName + "!", ex);
-        } finally {
-            return entity;
-        }
+        } 
+        return entity;
     }
 
     @Override

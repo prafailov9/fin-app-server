@@ -73,11 +73,11 @@ public class DatabaseConnection {
             Reader reader = new InputStreamReader(getClass().getResourceAsStream(propertiesFile));
             properties = new Properties();
             properties.load(reader);
+            return properties;
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
-        } finally {
-            return properties;
-        }
+        } 
+        return properties;
     }
 
     private DataSource loadDataSource() {

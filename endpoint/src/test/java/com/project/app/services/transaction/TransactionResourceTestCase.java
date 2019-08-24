@@ -1,9 +1,9 @@
-package com.project.app.resources.transaction;
+package com.project.app.services.transaction;
 
 import com.project.app.businesslogic.transaction.DefaultTransactionBL;
 import com.project.app.businesslogic.transaction.TransactionBL;
 import com.project.app.entities.transaction.Transaction;
-import com.project.app.resources.AbstractResourceTestCase;
+import com.project.app.services.AbstractResourceTestCase;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;

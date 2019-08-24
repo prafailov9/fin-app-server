@@ -1,9 +1,9 @@
-package com.project.app.resources.position;
+package com.project.app.services.position;
 
 import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;
 import com.project.app.entities.position.Position;
-import com.project.app.resources.AbstractResourceTestCase;
+import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;

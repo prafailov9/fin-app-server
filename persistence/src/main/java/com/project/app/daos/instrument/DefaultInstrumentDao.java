@@ -28,11 +28,11 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
             pst.setString(1, type);
             ResultSet results = pst.executeQuery();
             instrumentsByType = getAllDatabaseResults(results);
+            return instrumentsByType;
         } catch (SQLException ex) {
             Logger.getLogger(DefaultInstrumentDao.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return instrumentsByType;
-        }
+        } 
+        return instrumentsByType;
     }
 
     @Override
@@ -43,11 +43,11 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
             pst.setString(1, name);
             ResultSet rs = pst.executeQuery();
             dto = getDatabaseResults(rs);
+            return dto;
         } catch (SQLException ex) {
             Logger.getLogger(DefaultInstrumentDao.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            return dto;
         }
+        return dto;
     }
 
     @Override

@@ -1,9 +1,9 @@
-package com.project.app.resources.instrument;
+package com.project.app.services.instrument;
 
 import com.project.app.businesslogic.instrument.DefaultInstrumentBL;
 import com.project.app.businesslogic.instrument.InstrumentBL;
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.resources.AbstractResourceTestCase;
+import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;

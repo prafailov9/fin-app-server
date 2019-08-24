@@ -1,4 +1,4 @@
-package com.project.app.servicees.calculator;
+package com.project.app.services.calculator;
 
 import com.project.app.businesslogic.calculators.DefaultCalculationBL;
 import com.project.app.businesslogic.position.DefaultPositionBL;

@@ -1,4 +1,4 @@
-package com.project.app.resources;
+package com.project.app.services;
 
 import com.project.app.Main;
 import com.project.app.coredb.DatabaseBuilder;

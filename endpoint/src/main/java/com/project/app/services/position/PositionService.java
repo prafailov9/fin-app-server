@@ -1,4 +1,4 @@
-package com.project.app.servicees.position;
+package com.project.app.services.position;
 
 import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;

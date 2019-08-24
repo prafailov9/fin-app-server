@@ -1,4 +1,4 @@
-package com.project.app.resources.calculator;
+package com.project.app.services.calculator;
 
 import com.project.app.businesslogic.instrument.DefaultInstrumentBL;
 import com.project.app.businesslogic.instrument.InstrumentBL;
@@ -6,7 +6,7 @@ import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;
 import com.project.app.businesslogic.results.ResultObject;
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.resources.AbstractResourceTestCase;
+import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.client.Invocation;
