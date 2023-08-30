@@ -82,6 +82,11 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     }
 
     @Override
+    protected String buildInsertQueryWithForeignKeys(InstrumentDto entity) {
+        return null; // doesn't have FKs
+    }
+
+    @Override
     protected List<InstrumentDto> getAllDatabaseResults(ResultSet rs) throws SQLException {
         List<InstrumentDto> dtoList = new ArrayList<>();
         while (rs.next()) {
@@ -103,16 +108,6 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     @Override
     protected Long getEntityId(InstrumentDto entity) {
         return entity.getId();
-    }
-
-    @Override
-    protected Long getReferenceId(InstrumentDto entity) {
-        return null;
-    }
-
-    @Override
-    protected String getReferenceTableName(InstrumentDto entity) {
-        return null;
     }
 
     private InstrumentDto getResults(ResultSet rs) throws SQLException {

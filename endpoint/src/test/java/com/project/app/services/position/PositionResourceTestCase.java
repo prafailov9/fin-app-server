@@ -7,11 +7,11 @@ import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -99,8 +99,7 @@ public class PositionResourceTestCase extends AbstractResourceTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        List<Long> ids = pbl.getAllPositions().stream().map(pos -> pos.getId()).collect(Collectors.toList());
-        return ids;
+        return pbl.getAllPositions().stream().map(Position::getId).collect(Collectors.toList());
     }
 
 }

@@ -4,7 +4,6 @@ import com.project.app.dtos.instrument.InstrumentDto;
 import java.sql.Timestamp;
 
 public class PositionDto {
-
     private Long id;
     private Timestamp dealStartingDate;
     private String payer;
@@ -83,12 +82,21 @@ public class PositionDto {
         this.positionVolume = positionVolume;
     }
 
+    // lists formatted data for sql queries. has additional check on if instrument reference exists.
+    public String getDataAsString() {
+        String positionString = toString();
+        if (instrument == null || instrument.getId() == null) {
+            return positionString;
+        }
+
+        positionString = String.format("%s, %s", positionString, instrument.getId());
+        return positionString;
+    }
+
     @Override
     public String toString() {
-        return id + ", '" + dealStartingDate
-                + "', '" + payer + "', '" + receiver
-                + "', " + principal + ", " + positionVolume
-                + "";
+        return String.format("%s, '%s', '%s', '%s', %s, %s",
+                id, dealStartingDate, payer, receiver, principal, positionVolume);
     }
 
 }

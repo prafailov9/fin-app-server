@@ -2,14 +2,11 @@ package com.project.app.businesslogic.results;
 
 import com.project.app.businesslogic.adapters.JsonMapAdapter;
 import com.project.app.entities.position.Position;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)

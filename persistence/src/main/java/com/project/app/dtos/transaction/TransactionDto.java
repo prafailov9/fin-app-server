@@ -63,9 +63,19 @@ public class TransactionDto {
         this.sign = sign;
     }
 
+    public String getDataAsString() {
+        String txString = toString();
+        if (position == null || position.getId() == null) {
+            return txString;
+        }
+
+        txString = String.format("%s, %s", txString, position.getId());
+        return txString;
+    }
+
     @Override
     public String toString() {
-        return id + ", " + amount + ", " + sign + ", '" + transactionDate + "'";
+        return String.format("%s, %s, %s, '%s'", id, amount, sign, transactionDate);
     }
 
 }

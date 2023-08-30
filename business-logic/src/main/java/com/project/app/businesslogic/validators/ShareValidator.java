@@ -2,7 +2,6 @@ package com.project.app.businesslogic.validators;
 
 import com.project.app.entities.instrument.Share;
 import java.time.LocalDateTime;
-import javafx.util.Pair;
 
 /**
  *
@@ -21,9 +20,7 @@ public class ShareValidator extends InstrumentValidator<Share> {
 
     @Override
     protected Pair<LocalDateTime, LocalDateTime> getStartEndDates(Share entity) {
-        Pair<LocalDateTime, LocalDateTime> datesPair
-                = new Pair<>(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
-        return datesPair;
+        return Pair.createPair(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
     }
 
     @Override

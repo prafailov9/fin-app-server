@@ -13,7 +13,7 @@ public interface GenericDao<T> {
      *
      * @param entity
      */
-    void save(final T entity);
+    T save(final T entity);
 
     /**
      *

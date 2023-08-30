@@ -6,10 +6,11 @@ import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;
 import com.project.app.businesslogic.results.ResultObject;
 import com.project.app.entities.instrument.Instrument;
+import com.project.app.entities.position.Position;
 import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.Invocation;
 import org.junit.After;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
@@ -40,7 +41,7 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
     @Test
     public void getDepositResultObjectsTest() {
 //        Long posId = getRandomPositionIdByInstrumentType("deposit");
-        Long posId = 15L;
+        long posId = 15L;
         Invocation.Builder ib = getWebTarget().path(CALCULATOR_RA_PATH + "/deposit-calc/" + posId).request();
         ResultObject dro = ib.get(ResultObject.class);
 
@@ -51,7 +52,7 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
     @Test
     public void getCreditResultObjectTest() {
 //        Long posId = getRandomPositionIdByInstrumentType("credit");
-        Long posId = 18L;
+        long posId = 18L;
         Invocation.Builder ib = getWebTarget().path(CALCULATOR_RA_PATH + "/credit-calc/" + posId).request();
         ResultObject dro = ib.get(ResultObject.class);
         System.out.println(dro.getInterestPayments());
@@ -60,8 +61,7 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        List<Long> ids = pbl.getAllPositions().stream().map(inst -> inst.getId()).collect(Collectors.toList());
-        return ids;
+        return pbl.getAllPositions().stream().map(Position::getId).collect(Collectors.toList());
     }
 
     // Not finished
@@ -73,12 +73,11 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
     // Not finished
     private List<Long> getAllIdsByInstrumentType(String type) {
         List<Instrument> instruments = ibl.getAllInstrumentsByType(type);
-        List<Long> ids = pbl
+        return pbl
                 .getAllPositionsByInstrument(instruments.get(getGenerator().nextInt(0, instruments.size())))
                 .stream()
-                .map(entity -> entity.getId())
+                .map(Position::getId)
                 .collect(Collectors.toList());
-        return ids;
     }
 
 }

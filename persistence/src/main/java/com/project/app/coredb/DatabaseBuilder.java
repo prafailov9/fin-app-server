@@ -1,18 +1,15 @@
 package com.project.app.coredb;
 
 import com.project.app.exceptions.DatabaseInitializationException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import org.apache.ibatis.jdbc.RuntimeSqlException;
+import org.apache.ibatis.jdbc.ScriptRunner;
+
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.ibatis.jdbc.RuntimeSqlException;
-import org.apache.ibatis.jdbc.ScriptRunner;
 
 /**
  * Class for building a database with initial data without knowing the
@@ -58,22 +55,35 @@ public class DatabaseBuilder {
             try (Statement stm = conn.createStatement()) {
                 String dropAllTablesQuery = "drop table transactions; drop table positions; drop table instruments;";
                 stm.executeUpdate(dropAllTablesQuery);
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, String.format("Error during drop database: %s", ex.getMessage()), ex);
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Could not drop database", ex);
+            LOGGER.log(Level.SEVERE, String.format("Could not drop database: %s", ex.getMessage()), ex);
             throw ex;
         }
     }
 
     public static void runScript(Connection conn, String scriptFile) {
-        try (InputStream inputStream = InputStream.class.getResourceAsStream(scriptFile);
-            Reader reader = new InputStreamReader(inputStream)) {
-            ScriptRunner sr = new ScriptRunner(conn);
-            sr.setLogWriter(null);
-            sr.runScript(reader);
+        try {
+            InputStream inputStream = DatabaseBuilder.class.getResourceAsStream(scriptFile);
+            if (inputStream == null) {
+                LOGGER.log(Level.SEVERE, "Script file not found: " + scriptFile);
+                throw new RuntimeException("Script file not found");
+            }
+            try (Reader reader = new InputStreamReader(inputStream)) {
+                ScriptRunner sr = new ScriptRunner(conn);
+
+                // PrintWriter logWriter = new PrintWriter(new FileWriter("/resources//db-build.log", true));
+                sr.setLogWriter(null);
+
+                sr.runScript(reader);
+                // logWriter.flush();  // Flush the log buffer
+            }
         } catch (IOException | RuntimeSqlException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             throw new DatabaseInitializationException(ex);
         }
     }
+
 }

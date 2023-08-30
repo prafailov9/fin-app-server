@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -58,7 +58,7 @@ public class TransactionResourceTestCase extends AbstractResourceTestCase {
 
         Invocation.Builder ib = getWebTarget().path(TRANSACTION_REST_API_PATH + "/all").request();
         Response res = ib.get();
-        List<Transaction> txs = res.readEntity(new GenericType<List<Transaction>>() {
+        List<Transaction> txs = res.readEntity(new GenericType<>() {
         }); // wtf
         LOGGER.log(Level.INFO, "Retreived list size: {0}", txs.size());
         assertNotNull(txs);
@@ -104,8 +104,7 @@ public class TransactionResourceTestCase extends AbstractResourceTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        List<Long> ids = tbl.getAllTransactions().stream().map(tx -> tx.getId()).collect(Collectors.toList());
-        return ids;
+        return tbl.getAllTransactions().stream().map(Transaction::getId).collect(Collectors.toList());
     }
 
 }

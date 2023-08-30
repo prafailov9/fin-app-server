@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,8 +52,8 @@ public class DatabaseConnector {
     }
 
     public Connection getConnection() {
-        try (Connection connection = dataSource.getConnection()) {
-            return connection;
+        try {
+            return dataSource.getConnection();
         } catch (SQLException e) {
             LOGGER.severe("Could not retrieve connection!");
         }
@@ -60,7 +61,7 @@ public class DatabaseConnector {
     }
 
     private Properties loadProperties(String propertiesFile) {
-        try(Reader reader = new InputStreamReader(getClass().getResourceAsStream(propertiesFile))) {
+        try(Reader reader = new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream(propertiesFile)))) {
             properties = new Properties();
             properties.load(reader);
         } catch (IOException ex) {

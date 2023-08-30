@@ -46,10 +46,9 @@ public class Main {
         DatabaseConnector.initialize(DB_PROPERTIES_PATH);
 //        DatabaseBuilder.recreateDatabase(DatabaseConnection.getConnection());
         final HttpServer server = startServer();
-        System.out.println(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
-        System.in.read();
-        server.stop();
+        System.out.printf("Jersey app started with WADL available at "
+                + "%s application.wadl\nHit enter to stop it...%n", BASE_URI);
+        server.shutdownNow();
     }
 
 }

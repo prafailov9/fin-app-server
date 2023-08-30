@@ -5,7 +5,7 @@ import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
-import com.project.app.exceptions.CannotPersistEntityException;
+import com.project.app.exceptions.CannotSaveEntityException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implements PositionDao {
 
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
+
+    private final static String SUBSELECT_INSTRUMENT_FK_SQL = "(SELECT * FROM instruments WHERE instruments.id=%s)";
+
+    private final static String INSERT_WITH_FK_SQL = "INSERT INTO positions VALUES (%s)";
 
     private final InstrumentDao instrumentDao;
 
@@ -89,7 +93,7 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
     @Override
     protected boolean containsReference(PositionDto entity) {
         if (Objects.isNull(entity.getInstrument()) || Objects.isNull(entity.getInstrument().getId())) {
-            throw new CannotPersistEntityException();
+            throw new CannotSaveEntityException();
         }
         return true;
     }
@@ -118,6 +122,19 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
     }
 
     @Override
+    protected String buildInsertQueryWithForeignKeys(PositionDto entity) {
+        // check if fk is null
+        if (entity.getInstrument() == null || entity.getInstrument().getId() == null) {
+            throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
+        }
+        // entity.toString() is invoked
+        String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
+        LOGGER.log(Level.INFO, "Built insert query: {0}", insertQuery);
+
+        return insertQuery;
+    }
+
+    @Override
     protected List<PositionDto> getAllDatabaseResults(ResultSet rs) throws SQLException {
         List<PositionDto> dtoList = new ArrayList<>();
         while (rs.next()) {
@@ -125,16 +142,6 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
             dtoList.add(pos);
         }
         return dtoList;
-    }
-
-    @Override
-    protected Long getReferenceId(PositionDto entity) {
-        return entity.getInstrument().getId();
-    }
-
-    @Override
-    protected String getReferenceTableName(PositionDto entity) {
-        return "instruments";
     }
 
 }

@@ -4,7 +4,7 @@ import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.daos.position.DefaultPositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.dtos.transaction.TransactionDto;
-import com.project.app.exceptions.CannotPersistEntityException;
+import com.project.app.exceptions.CannotSaveEntityException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> implements TransactionDao {
 
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
+
+    private final static String INSERT_WITH_FK_SQL = "INSERT INTO transactions VALUES (%s)";
 
     public DefaultTransactionDao() {
         super("transactions");
@@ -68,7 +70,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     @Override
     protected boolean containsReference(TransactionDto entity) {
         if (Objects.isNull(entity.getPosition()) || Objects.isNull(entity.getPosition().getId())) {
-            throw new CannotPersistEntityException();
+            throw new CannotSaveEntityException();
         } else {
             return true;
         }
@@ -95,6 +97,17 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     }
 
     @Override
+    protected String buildInsertQueryWithForeignKeys(TransactionDto entity) {
+        if (entity.getPosition() == null) {
+            throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
+        }
+        String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
+        LOGGER.log(Level.INFO, "Built insert query: {0}", insertQuery);
+
+        return insertQuery;
+    }
+
+    @Override
     protected List<TransactionDto> getAllDatabaseResults(ResultSet rs) throws SQLException {
         List<TransactionDto> txList = new ArrayList<>();
         while (rs.next()) {
@@ -102,16 +115,6 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
             txList.add(tx);
         }
         return txList;
-    }
-
-    @Override
-    protected Long getReferenceId(TransactionDto entity) {
-        return entity.getPosition().getId();
-    }
-
-    @Override
-    protected String getReferenceTableName(TransactionDto entity) {
-        return "positions";
     }
 
 }

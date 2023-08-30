@@ -7,11 +7,11 @@ import com.project.app.services.AbstractResourceTestCase;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,7 +54,7 @@ public class InstrumentResourceTestCase extends AbstractResourceTestCase {
     public void getAllInstrumentsTest() {
         String resource = "/all";
         Invocation.Builder ib = getWebTarget().path(INSTRUMENT_REST_API_PATH + resource).request();
-        List<Instrument> entities = ib.get(new GenericType<List<Instrument>>() {
+        List<Instrument> entities = ib.get(new GenericType<>() {
         });
 
         LOGGER.log(Level.INFO, "Results count: {0}", entities.size());
@@ -92,7 +92,7 @@ public class InstrumentResourceTestCase extends AbstractResourceTestCase {
 
         Invocation.Builder ib = getWebTarget().path(INSTRUMENT_REST_API_PATH + "/update").request(MediaType.APPLICATION_JSON);
         Response res = ib.put(Entity.entity(inst, MediaType.APPLICATION_JSON));
-        Instrument updatedInst = res.readEntity(new GenericType<Instrument>() {
+        Instrument updatedInst = res.readEntity(new GenericType<>() {
         });
         LOGGER.log(Level.INFO, "Updated instrument: {0]", updatedInst);
         assertEquals(newName, updatedInst.getInstrumentName());
@@ -100,8 +100,7 @@ public class InstrumentResourceTestCase extends AbstractResourceTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        List<Long> ids = ibl.getAllInstruments().stream().map(inst -> inst.getId()).collect(Collectors.toList());
-        return ids;
+        return ibl.getAllInstruments().stream().map(Instrument::getId).collect(Collectors.toList());
     }
 
 }

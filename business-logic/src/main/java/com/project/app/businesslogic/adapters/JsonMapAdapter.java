@@ -1,9 +1,10 @@
 package com.project.app.businesslogic.adapters;
 
 import com.project.app.businesslogic.parsers.JsonMapParser;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  *

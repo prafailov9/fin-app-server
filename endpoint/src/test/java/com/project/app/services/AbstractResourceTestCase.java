@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,7 +25,6 @@ public abstract class AbstractResourceTestCase {
     private final static String PROPERTIES_PATH = "/db-test.properties";
     private static HttpServer server;
     private static WebTarget target;
-    private static DatabaseConnector databaseConnection;
     private final ThreadLocalRandom generator = ThreadLocalRandom.current();
     protected final static Logger LOGGER = Logger.getLogger(AbstractResourceTestCase.class.getCanonicalName());
 
@@ -53,7 +53,7 @@ public abstract class AbstractResourceTestCase {
             DatabaseBuilder.dropDatabase();
             server.shutdownNow();
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error occured while dropping test database!", ex);
+            LOGGER.log(Level.SEVERE, "Error occurred while dropping test database!", ex);
         }
     }
 

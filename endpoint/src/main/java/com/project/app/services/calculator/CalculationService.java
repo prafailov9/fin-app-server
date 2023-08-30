@@ -5,12 +5,12 @@ import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;
 import com.project.app.businesslogic.results.ResultObject;
 import com.project.app.entities.position.Position;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  *
@@ -43,8 +43,7 @@ public class CalculationService {
     public ResultObject getCreditCalculationResults(@PathParam("posId") Long posId) {
         Position pos = pbl.getPosition(posId);
 
-        ResultObject ro = cbl.getCreditCalculationResults(pos);
-        return ro;
+        return cbl.getCreditCalculationResults(pos);
     }
 
 }

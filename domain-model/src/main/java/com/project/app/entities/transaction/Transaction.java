@@ -2,10 +2,11 @@ package com.project.app.entities.transaction;
 
 import com.project.app.entities.jsonadapters.LocalDateTimeAdapter;
 import com.project.app.entities.position.Position;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class Transaction {
 

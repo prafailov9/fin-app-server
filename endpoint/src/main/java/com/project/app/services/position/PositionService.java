@@ -4,15 +4,15 @@ import com.project.app.businesslogic.position.DefaultPositionBL;
 import com.project.app.businesslogic.position.PositionBL;
 import com.project.app.entities.position.Position;
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  *
@@ -32,15 +32,13 @@ public class PositionService {
     @GET
     @Path("/{positionId}")
     public Position getPosition(@PathParam("positionId") Long id) {
-        Position pos = positionBL.getPosition(id);
-        return pos;
+        return positionBL.getPosition(id);
     }
 
     @GET
     @Path("/all")
     public List<Position> getAllPositions() {
-        List<Position> poss = positionBL.getAllPositions();
-        return poss;
+        return positionBL.getAllPositions();
     }
 
     @POST

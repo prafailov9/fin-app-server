@@ -2,10 +2,11 @@ package com.project.app.businesslogic.results;
 
 import com.project.app.businesslogic.adapters.JsonMapAdapter;
 import com.project.app.entities.position.Position;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
