@@ -16,56 +16,45 @@ import org.apache.commons.dbcp.BasicDataSource;
     Class for creating a database connection without knowing the underlying RDBMS.
     Only one unique instance of this class can exist at any given time.
  */
-public class DatabaseConnection {
+public class DatabaseConnector {
 
-    private final static Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getCanonicalName());
+    private final static Logger LOGGER = Logger.getLogger(DatabaseConnector.class.getCanonicalName());
 
     private DataSource dataSource;
     private Properties properties;
-    private Connection connection;
 
-    private DatabaseConnection(String propertiesFile) {
-        try {
-            this.properties = loadProperties(propertiesFile);
-            this.dataSource = loadDataSource();
-            this.connection = dataSource.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private DatabaseConnector(String propertiesFile) {
+        this.properties = loadProperties(propertiesFile);
+        this.dataSource = loadDataSource();
     }
 
-    private static class Holder {
+    private static class InstanceHolder {
 
-        static DatabaseConnection INSTANCE;
+        static DatabaseConnector INSTANCE;
 
         static final void setInstance(final String properties) {
-            INSTANCE = new DatabaseConnection(properties);
+            INSTANCE = new DatabaseConnector(properties);
         }
     }
 
     public static void initialize(final String properties) {
-        Holder.setInstance(properties);
-
+        InstanceHolder.setInstance(properties);
     }
 
-    public static DatabaseConnection getInstance() {
-        return Holder.INSTANCE;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public Properties getProperties() {
-        return properties;
+    public static DatabaseConnector getInstance() {
+        if (InstanceHolder.INSTANCE == null) {
+            throw new RuntimeException("Database Connector not initialized! initialize() must be called before retrieval...");
+        }
+        return InstanceHolder.INSTANCE;
     }
 
     public Connection getConnection() {
-        return connection;
-    }
-
-    public void closeConnection() throws SQLException {
-        connection.close();
+        try {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            LOGGER.severe("Could not retrieve connection!");
+        }
+        return null;
     }
 
     private Properties loadProperties(String propertiesFile) {
@@ -73,11 +62,12 @@ public class DatabaseConnection {
             Reader reader = new InputStreamReader(getClass().getResourceAsStream(propertiesFile));
             properties = new Properties();
             properties.load(reader);
-            return properties;
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
-        } 
-        return properties;
+            throw new RuntimeException("Could not load properties! File might not exist, wrong path given, or data is invalid!");
+        } finally {
+            return properties;
+        }
     }
 
     private DataSource loadDataSource() {
@@ -86,7 +76,15 @@ public class DatabaseConnection {
         ds.setUrl(properties.getProperty("datasource.url"));
         ds.setUsername(properties.getProperty("datasource.username"));
         ds.setPassword(properties.getProperty("datasource.password"));
+
+        // Configure connection pool properties
+        ds.setInitialSize(5); // initial pool size
+        ds.setMaxActive(50);   // max number of connections
+        ds.setMinIdle(5);     // min idle connections
+        ds.setMaxIdle(20);    // max idle connections
+
         return ds;
     }
+
 
 }

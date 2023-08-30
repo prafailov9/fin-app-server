@@ -1,7 +1,7 @@
 package com.project.app.businesslogic;
 
 import com.project.app.coredb.DatabaseBuilder;
-import com.project.app.coredb.DatabaseConnection;
+import com.project.app.coredb.DatabaseConnector;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,15 +18,15 @@ public abstract class AbstractEntityBLTestCase {
 
     private final static String PROPERTIES_PATH = "/db-test.properties";
     private final ThreadLocalRandom generator = ThreadLocalRandom.current();
-    private static DatabaseConnection databaseConnection;
+    private static DatabaseConnector databaseConnection;
     protected final static Logger LOGGER = Logger.getLogger(AbstractEntityBLTestCase.class.getCanonicalName());
 
     @BeforeClass
     public static void beforeClass() {
         try {
             LOGGER.log(Level.INFO, "Creating database connection...");
-            DatabaseConnection.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnection.getInstance();
+            DatabaseConnector.initialize(PROPERTIES_PATH);
+            databaseConnection = DatabaseConnector.getInstance();
             LOGGER.log(Level.INFO, "Building test database...");
             DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
             DatabaseBuilder.insertData(databaseConnection.getConnection());

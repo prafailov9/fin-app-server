@@ -13,14 +13,14 @@ public abstract class AbstractGenericDaoTestCase<T> {
 
     protected final static Logger LOGGER = Logger.getLogger(AbstractGenericDaoTestCase.class.getCanonicalName());
     private static final String PROPERTIES_PATH = "/db-test.properties";
-    private static DatabaseConnection databaseConnection;
+    private static DatabaseConnector databaseConnection;
 
     @BeforeClass
     public static void beforeClass() {
         LOGGER.log(Level.INFO, "In abstract Dao test class. Setting up test connection...");
         try {
-            DatabaseConnection.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnection.getInstance();
+            DatabaseConnector.initialize(PROPERTIES_PATH);
+            databaseConnection = DatabaseConnector.getInstance();
             LOGGER.log(Level.INFO, "Building test database...");
             DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
             LOGGER.log(Level.INFO, "Inserting test data...");

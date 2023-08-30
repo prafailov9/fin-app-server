@@ -20,22 +20,18 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
-    protected final static Logger LOGGER = Logger.getLogger(AbstractGenericDao.class.getCanonicalName());
+    protected static final Logger LOGGER = Logger.getLogger(AbstractGenericDao.class.getCanonicalName());
 
-    private final static String INSERT_QUERY = "insert into %s values (%s)";
-    private final static String INSERT_WITH_FK_QUERY = "insert into %s values (%s, (select id from %s where id = %s));";
-    private final static String DELETE_QUERY = "delete from %s where id=?";
-    private final static String LOAD_ONE_QUERY = "select * from %s where id=?";
-    private final static String LOAD_ALL_QUERY = "select * from %s";
+    private static final String INSERT_QUERY = "insert into %s values (%s)";
+    private static final String INSERT_WITH_FK_QUERY = "insert into %s values (%s, (select id from %s where id = %s));";
+    private static final String DELETE_QUERY = "delete from %s where id=?";
+    private static final String LOAD_ONE_QUERY = "select * from %s where id=?";
+    private static final String LOAD_ALL_QUERY = "select * from %s";
 
-    private Connection connection;
     protected String tableName;
 
-    public AbstractGenericDao(String tableName) {
+    protected AbstractGenericDao(String tableName) {
         this.tableName = tableName;
-        DatabaseConnection DBC = DatabaseConnection.getInstance();
-        this.connection = DBC.getConnection();
-
     }
 
     @Override
@@ -45,53 +41,62 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
         } else {
             saveNoReference(entity);
         }
-
     }
 
     @Override
     public T loadById(final Long id) {
+        Connection connection = getConnection();
         T entity = null;
+        PreparedStatement pst = null;
+        ResultSet results = null;
         try {
             String query = String.format(LOAD_ONE_QUERY, tableName);
-            PreparedStatement pst = connection.prepareStatement(query);
+            pst = connection.prepareStatement(query);
 
             pst.setLong(1, id);
-            ResultSet results = pst.executeQuery();
+            results = pst.executeQuery();
             entity = getDatabaseResults(results);
             if (Objects.isNull(entity) || Objects.isNull(getEntityId(entity))) {
                 throw new NoRecordFoundException();
             }
-            return entity;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Could not load a record with id=" + id + " from " + tableName + "!", ex);
-        } 
+        } finally {
+            closeDatabaseResources(results, pst);
+        }
         return entity;
     }
 
     @Override
     public List<T> loadAll() {
+        Connection connection = getConnection();
+        PreparedStatement pst = null;
+        ResultSet results = null;
         try {
             String query = String.format(LOAD_ALL_QUERY, tableName);
-            PreparedStatement pst = connection.prepareStatement(query);
-            ResultSet results = pst.executeQuery();
+            pst = connection.prepareStatement(query);
+            results = pst.executeQuery();
 
-            List<T> dtoList = getAllDatabaseResults(results);
-            return dtoList;
+            return getAllDatabaseResults(results);
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Could not load all records from " + tableName + "!", ex);
+        } finally {
+            closeDatabaseResources(results, pst);
         }
         return null;
     }
 
     @Override
     public void delete(T entity) {
+        Connection connection = getConnection();
         Long entityId = getEntityId(entity);
+        PreparedStatement pst = null;
         try {
-            if (Objects.isNull(entityId)) {
+            if (entityId == null) {
                 throw new NoSuchEntityException();
             } else {
                 String query = String.format(DELETE_QUERY, tableName);
-                PreparedStatement pst = connection.prepareStatement(query);
+                pst = connection.prepareStatement(query);
                 pst.setLong(1, entityId);
                 pst.executeUpdate();
                 setEntityId(entity, null);
@@ -99,11 +104,14 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Could not delete record with id=" + entityId + "from " + tableName + "!", ex);
+        } finally {
+            closeDatabaseResources(null, pst);
         }
     }
 
     @Override
     public void update(final T entity) {
+        Connection connection = getConnection();
         try {
             if (Objects.isNull(getEntityId(entity))) {
                 throw new NoSuchEntityException();
@@ -117,7 +125,7 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
     }
 
     private void checkIfPersisted(T entity) {
-        if (Objects.nonNull(getEntityId(entity))) {
+        if (getEntityId(entity) != null) {
             throw new CannotPersistEntityException();
         }
     }
@@ -125,24 +133,26 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
     private void saveWithReference(T entity) {
         checkIfPersisted(entity);
         String query = formInsertWithFKQuery(entity);
-        runInsertQuery(entity, query, connection);
+        runInsertQuery(entity, query);
     }
 
     private void saveNoReference(T entity) {
         checkIfPersisted(entity);
         String query = String.format(INSERT_QUERY, tableName, entity.toString());
-        runInsertQuery(entity, query, connection);
+        runInsertQuery(entity, query);
 
     }
 
     private String formInsertWithFKQuery(T entity) {
+        Connection connection = getConnection();
         String query = null;
-
+        PreparedStatement pst = null;
+        ResultSet rs = null;
         String innerQuery = String.format(LOAD_ONE_QUERY, getReferenceTableName(entity));
         try {
-            PreparedStatement pst = connection.prepareStatement(innerQuery);
+            pst = connection.prepareStatement(innerQuery);
             pst.setLong(1, getReferenceId(entity));
-            ResultSet rs = pst.executeQuery();
+            rs = pst.executeQuery();
             if (!rs.next()) {
                 throw new CannotPersistEntityException();
             } else {
@@ -151,16 +161,21 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
             }
         } catch (SQLException ex) {
             Logger.getLogger(AbstractGenericDao.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeDatabaseResources(rs, pst);
         }
         return query;
     }
 
-    private void runInsertQuery(T entity, String query, Connection conn) {
+    private void runInsertQuery(T entity, String query) {
+        Connection connection = getConnection();
+        PreparedStatement insertStatement = null;
+        ResultSet keys = null;
         try {
             LOGGER.log(Level.INFO, "Query: {0}", query);
-            PreparedStatement insertStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            insertStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             insertStatement.executeUpdate();
-            ResultSet keys = insertStatement.getGeneratedKeys();
+            keys = insertStatement.getGeneratedKeys();
             if (keys.next()) {
                 Long id = keys.getLong(1);
                 setEntityId(entity, id);
@@ -168,11 +183,36 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Could not create a record in " + tableName + "!", ex);
             throw new CannotPersistEntityException();
+        } finally {
+            closeDatabaseResources(keys, insertStatement);
         }
     }
 
-    protected Connection getConnection() {
-        return connection;
+
+    private Connection getConnection() {
+        return DatabaseConnector.getInstance().getConnection();
+    }
+
+    /**
+     * Method to close the db resources once used. If not closed, these objects might potentially create memory leaks
+     * and other unwanted behavior.
+     *
+     * @param rs  - result set
+     * @param stm - statement
+     */
+    protected void closeDatabaseResources(final ResultSet rs, final Statement stm) {
+        try {
+            if (rs != null)
+                rs.close();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Could not close ResultSet in " + tableName + "!", ex);
+        }
+        try {
+            if (stm != null)
+                stm.close();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Could not close Statement in " + tableName + "!", ex);
+        }
     }
 
     protected abstract Long getEntityId(T entity);

@@ -2,7 +2,7 @@ package com.project.app.services;
 
 import com.project.app.Main;
 import com.project.app.coredb.DatabaseBuilder;
-import com.project.app.coredb.DatabaseConnection;
+import com.project.app.coredb.DatabaseConnector;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,15 +24,15 @@ public abstract class AbstractResourceTestCase {
     private final static String PROPERTIES_PATH = "/db-test.properties";
     private static HttpServer server;
     private static WebTarget target;
-    private static DatabaseConnection databaseConnection;
+    private static DatabaseConnector databaseConnection;
     private final ThreadLocalRandom generator = ThreadLocalRandom.current();
     protected final static Logger LOGGER = Logger.getLogger(AbstractResourceTestCase.class.getCanonicalName());
 
     @BeforeClass
     public static void setUpClass() {
         try {
-            DatabaseConnection.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnection.getInstance();
+            DatabaseConnector.initialize(PROPERTIES_PATH);
+            databaseConnection = DatabaseConnector.getInstance();
             DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
             DatabaseBuilder.insertData(databaseConnection.getConnection());
         } catch (SQLException ex) {

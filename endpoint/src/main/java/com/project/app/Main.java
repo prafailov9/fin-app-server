@@ -1,6 +1,6 @@
 package com.project.app;
 
-import com.project.app.coredb.DatabaseConnection;
+import com.project.app.coredb.DatabaseConnector;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -43,7 +43,7 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        DatabaseConnection.initialize(DB_PROPERTIES_PATH);
+        DatabaseConnector.initialize(DB_PROPERTIES_PATH);
 //        DatabaseBuilder.recreateDatabase(DatabaseConnection.getConnection());
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
