@@ -37,7 +37,7 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
 
     @Override
     public InstrumentDto loadOneByName(final String name) {
-        InstrumentDto dto = null;
+        InstrumentDto dto;
         try {
             PreparedStatement pst = getConnection().prepareStatement(SELECT_ONE_BY_NAME_QUERY);
             pst.setString(1, name);
@@ -47,7 +47,7 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
         } catch (SQLException ex) {
             Logger.getLogger(DefaultInstrumentDao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return dto;
+        return null;
     }
 
     @Override
@@ -61,7 +61,9 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     }
 
     @Override
-    protected void runUpdateQuery(InstrumentDto entity, Connection conn) throws SQLException {
+    protected void runUpdateQuery(InstrumentDto entity) throws SQLException {
+        Connection conn = getConnection();
+
         String query = "update " + tableName + " set id=?, instrument_name=?, interest_rate=?, "
                 + "start_payment_date=?, end_payment_date=?, interest_frequency=?, "
                 + "principal_frequency=?, instrument_type=? where id=" + entity.getId();

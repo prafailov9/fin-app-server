@@ -13,18 +13,16 @@ public abstract class AbstractGenericDaoTestCase<T> {
 
     protected final static Logger LOGGER = Logger.getLogger(AbstractGenericDaoTestCase.class.getCanonicalName());
     private static final String PROPERTIES_PATH = "/db-test.properties";
-    private static DatabaseConnector databaseConnection;
 
     @BeforeClass
     public static void beforeClass() {
         LOGGER.log(Level.INFO, "In abstract Dao test class. Setting up test connection...");
         try {
             DatabaseConnector.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnector.getInstance();
             LOGGER.log(Level.INFO, "Building test database...");
-            DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
+            DatabaseBuilder.buildDatabase();
             LOGGER.log(Level.INFO, "Inserting test data...");
-            DatabaseBuilder.insertData(databaseConnection.getConnection());
+            DatabaseBuilder.insertData();
             LOGGER.log(Level.INFO, "Test database configured!");
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Exception in abstract dao test class: {0}", ex.getMessage());
@@ -35,8 +33,7 @@ public abstract class AbstractGenericDaoTestCase<T> {
     public static void afterClass() {
         LOGGER.log(Level.INFO, "In abstract test class.");
         try {
-            DatabaseBuilder.dropDatabase(databaseConnection.getConnection());
-            databaseConnection.closeConnection();
+            DatabaseBuilder.dropDatabase();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Exception in abstract test class: {0}", ex.getMessage());
         }
@@ -44,14 +41,12 @@ public abstract class AbstractGenericDaoTestCase<T> {
 
     public Long getRandomId() {
         List<Long> ids = getAllIds();
-        Long randomId = ids.get(new Random().nextInt(ids.size()));
-        return randomId;
+        return ids.get(new Random().nextInt(ids.size()));
     }
 
     protected List<Long> getAllIds() {
         List<T> records = getRecords();
-        List<Long> ids = records.stream().map(t -> getDtoId(t)).collect(Collectors.toList());
-        return ids;
+        return records.stream().map(this::getDtoId).collect(Collectors.toList());
     }
 
     protected abstract List<T> getRecords();

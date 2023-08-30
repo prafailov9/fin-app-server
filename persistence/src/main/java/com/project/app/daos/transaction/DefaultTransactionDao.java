@@ -80,10 +80,11 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     }
 
     @Override
-    protected void runUpdateQuery(TransactionDto entity, Connection conn) throws SQLException {
-        String query = "update " + tableName + " set id=?, amount=?, sign=?, transaction_date=?, fk_position=? where id=" + entity.getId() + ";";
-        LOGGER.log(Level.INFO, "Update query: {0}", query);
-        PreparedStatement pst = conn.prepareStatement(query);
+    protected void runUpdateQuery(TransactionDto entity) throws SQLException {
+        Connection conn = getConnection();
+        String sql = "update " + tableName + " set id=?, amount=?, sign=?, transaction_date=?, fk_position=? where id=" + entity.getId() + ";";
+        LOGGER.log(Level.INFO, "Update query: {0}", sql);
+        PreparedStatement pst = conn.prepareStatement(sql);
         pst.setLong(1, entity.getId());
         pst.setDouble(2, entity.getAmount());
         pst.setInt(3, entity.getSign());

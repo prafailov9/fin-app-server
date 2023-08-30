@@ -1,5 +1,7 @@
 package com.project.app.coredb;
 
+import com.project.app.exceptions.CannotLoadPropertiesException;
+import com.project.app.exceptions.ConnectorNotInitException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -43,14 +45,14 @@ public class DatabaseConnector {
 
     public static DatabaseConnector getInstance() {
         if (InstanceHolder.INSTANCE == null) {
-            throw new RuntimeException("Database Connector not initialized! initialize() must be called before retrieval...");
+            throw new ConnectorNotInitException("Database Connector not initialized! initialize() must be called before retrieval");
         }
         return InstanceHolder.INSTANCE;
     }
 
     public Connection getConnection() {
-        try {
-            return dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
+            return connection;
         } catch (SQLException e) {
             LOGGER.severe("Could not retrieve connection!");
         }
@@ -58,16 +60,14 @@ public class DatabaseConnector {
     }
 
     private Properties loadProperties(String propertiesFile) {
-        try {
-            Reader reader = new InputStreamReader(getClass().getResourceAsStream(propertiesFile));
+        try(Reader reader = new InputStreamReader(getClass().getResourceAsStream(propertiesFile))) {
             properties = new Properties();
             properties.load(reader);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
-            throw new RuntimeException("Could not load properties! File might not exist, wrong path given, or data is invalid!");
-        } finally {
-            return properties;
+            throw new CannotLoadPropertiesException("Could not load properties! File might not exist, wrong path given, or data is invalid!");
         }
+        return properties;
     }
 
     private DataSource loadDataSource() {
@@ -79,7 +79,7 @@ public class DatabaseConnector {
 
         // Configure connection pool properties
         ds.setInitialSize(5); // initial pool size
-        ds.setMaxActive(50);   // max number of connections
+        ds.setMaxActive(50);   // max active connections
         ds.setMinIdle(5);     // min idle connections
         ds.setMaxIdle(20);    // max idle connections
 

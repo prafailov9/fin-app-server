@@ -100,7 +100,8 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
     }
 
     @Override
-    protected void runUpdateQuery(PositionDto entity, Connection conn) throws SQLException {
+    protected void runUpdateQuery(PositionDto entity) throws SQLException {
+        Connection conn = getConnection();
         String query = "update " + tableName + " set id=?, deal_start_date=?, payer_name=?, "
                 + "receiver_name=?, principal=?, position_volume=?, fk_instrument=? where id=" + entity.getId() + ";";
         LOGGER.log(Level.INFO, "Update query: {0}", query);

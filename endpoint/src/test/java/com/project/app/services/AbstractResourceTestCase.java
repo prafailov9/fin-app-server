@@ -32,9 +32,8 @@ public abstract class AbstractResourceTestCase {
     public static void setUpClass() {
         try {
             DatabaseConnector.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnector.getInstance();
-            DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
-            DatabaseBuilder.insertData(databaseConnection.getConnection());
+            DatabaseBuilder.buildDatabase();
+            DatabaseBuilder.insertData();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error occured while building test database!", ex);
         }
@@ -51,8 +50,7 @@ public abstract class AbstractResourceTestCase {
     public static void tearDownClass() {
         try {
             LOGGER.log(Level.INFO, "IN TEAR DOWN ABSTRACT CLASS!");
-            DatabaseBuilder.dropDatabase(databaseConnection.getConnection());
-            databaseConnection.closeConnection();
+            DatabaseBuilder.dropDatabase();
             server.shutdownNow();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error occured while dropping test database!", ex);

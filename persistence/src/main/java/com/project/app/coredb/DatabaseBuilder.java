@@ -1,5 +1,8 @@
 package com.project.app.coredb;
 
+import com.project.app.exceptions.DatabaseInitializationException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -19,42 +22,58 @@ import org.apache.ibatis.jdbc.ScriptRunner;
  */
 public class DatabaseBuilder {
 
-    private final static Logger LOGGER = Logger.getLogger(DatabaseBuilder.class.getCanonicalName());
-    private final static String RECREATE_DB_SCRIPT_FILE = "/recreate-db-script.sql";
-    private final static String DB_SCRIPT_FILE = "/fin-db-script.sql";
-    private final static String TEST_DATA_FILE = "/test-data.sql";
+    private static final Logger LOGGER = Logger.getLogger(DatabaseBuilder.class.getCanonicalName());
+    private static final String RECREATE_DB_SCRIPT_FILE = "/recreate-db-script.sql";
+    private static final String DB_SCRIPT_FILE = "/fin-db-script.sql";
+    private static final String TEST_DATA_FILE = "/test-data.sql";
+
+    private DatabaseBuilder() {
+
+    }
 
     public static void recreateDatabase(Connection conn) {
-        String message = "Error occured while recreating database!";
-        runScript(conn, RECREATE_DB_SCRIPT_FILE, message);
+        runScript(conn, RECREATE_DB_SCRIPT_FILE);
     }
 
-    public static void buildDatabase(Connection conn) throws SQLException {
-        String message = "Error occured while building database!";
-        runScript(conn, DB_SCRIPT_FILE, message);
-    }
-
-    public static void insertData(Connection conn) throws SQLException {
-        String message = "Error occured while inserting test data!";
-        runScript(conn, TEST_DATA_FILE, message);
-    }
-
-    public static void dropDatabase(Connection conn) throws SQLException {
-        Statement stm = conn.createStatement();
-        String dropAllTablesQuery = "drop table transactions; drop table positions; drop table instruments;";
-        stm.executeUpdate(dropAllTablesQuery);
-    }
-
-    public final static void runScript(Connection conn, String scriptFile, String message) {
-        try {
-            InputStream inputStream = InputStream.class.getResourceAsStream(scriptFile);
-            Reader reader = new InputStreamReader(inputStream);
-            ScriptRunner sr = new ScriptRunner(conn);
-            sr.setLogWriter(null); // Script runner will not log the file contents.
-            sr.runScript(reader);
-        } catch (RuntimeSqlException ex) {
-            LOGGER.log(Level.INFO, message, ex);
+    public static void buildDatabase() throws SQLException {
+        try (Connection conn = DatabaseConnector.getInstance().getConnection()) {
+            runScript(conn, DB_SCRIPT_FILE);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error while building the database!", ex);
+            throw ex;
         }
+    }
 
+    public static void insertData() throws SQLException {
+        try (Connection conn = DatabaseConnector.getInstance().getConnection()) {
+            runScript(conn, TEST_DATA_FILE);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error occurred while inserting data", ex);
+            throw ex;
+        }
+    }
+
+    public static void dropDatabase() throws SQLException {
+        try (Connection conn = DatabaseConnector.getInstance().getConnection()) {
+            try (Statement stm = conn.createStatement()) {
+                String dropAllTablesQuery = "drop table transactions; drop table positions; drop table instruments;";
+                stm.executeUpdate(dropAllTablesQuery);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Could not drop database", ex);
+            throw ex;
+        }
+    }
+
+    public static void runScript(Connection conn, String scriptFile) {
+        try (InputStream inputStream = InputStream.class.getResourceAsStream(scriptFile);
+            Reader reader = new InputStreamReader(inputStream)) {
+            ScriptRunner sr = new ScriptRunner(conn);
+            sr.setLogWriter(null);
+            sr.runScript(reader);
+        } catch (IOException | RuntimeSqlException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            throw new DatabaseInitializationException(ex);
+        }
     }
 }

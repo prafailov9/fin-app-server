@@ -2,6 +2,7 @@ package com.project.app.businesslogic;
 
 import com.project.app.coredb.DatabaseBuilder;
 import com.project.app.coredb.DatabaseConnector;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,7 +19,7 @@ public abstract class AbstractEntityBLTestCase {
 
     private final static String PROPERTIES_PATH = "/db-test.properties";
     private final ThreadLocalRandom generator = ThreadLocalRandom.current();
-    private static DatabaseConnector databaseConnection;
+    private static Connection connection;
     protected final static Logger LOGGER = Logger.getLogger(AbstractEntityBLTestCase.class.getCanonicalName());
 
     @BeforeClass
@@ -26,10 +27,10 @@ public abstract class AbstractEntityBLTestCase {
         try {
             LOGGER.log(Level.INFO, "Creating database connection...");
             DatabaseConnector.initialize(PROPERTIES_PATH);
-            databaseConnection = DatabaseConnector.getInstance();
+            connection = DatabaseConnector.getInstance().getConnection();
             LOGGER.log(Level.INFO, "Building test database...");
-            DatabaseBuilder.buildDatabase(databaseConnection.getConnection());
-            DatabaseBuilder.insertData(databaseConnection.getConnection());
+            DatabaseBuilder.buildDatabase();
+            DatabaseBuilder.insertData();
             LOGGER.log(Level.INFO, "Test database build successfull!");
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error occured while building test database!");
@@ -41,8 +42,7 @@ public abstract class AbstractEntityBLTestCase {
     public static void tearDownClass() {
         try {
             LOGGER.log(Level.INFO, "Dropping database...");
-            DatabaseBuilder.dropDatabase(databaseConnection.getConnection());
-            databaseConnection.closeConnection();
+            DatabaseBuilder.dropDatabase();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error occured while dropping test database!");
         }
