@@ -4,7 +4,8 @@ import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.daos.position.DefaultPositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.dtos.transaction.TransactionDto;
-import com.project.app.exceptions.CannotSaveEntityException;
+import com.project.app.exceptions.SaveForEntityFailedException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,15 +71,10 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     @Override
     protected boolean containsReference(TransactionDto entity) {
         if (Objects.isNull(entity.getPosition()) || Objects.isNull(entity.getPosition().getId())) {
-            throw new CannotSaveEntityException();
+            throw new SaveForEntityFailedException();
         } else {
             return true;
         }
-    }
-
-    @Override
-    protected Long getEntityId(TransactionDto entity) {
-        return entity.getId();
     }
 
     @Override

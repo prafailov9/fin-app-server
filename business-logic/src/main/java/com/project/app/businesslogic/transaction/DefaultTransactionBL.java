@@ -6,11 +6,8 @@ import com.project.app.daos.transaction.TransactionDao;
 import com.project.app.dtos.transaction.TransactionDto;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
-import com.project.app.exceptions.CannotSaveEntityException;
-import com.project.app.exceptions.EntityConverterNotFoundException;
-import com.project.app.exceptions.NoRecordFoundException;
-import com.project.app.exceptions.NoSuchEntityException;
-import com.project.app.exceptions.NullIdException;
+import com.project.app.exceptions.*;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +35,7 @@ public class DefaultTransactionBL implements TransactionBL {
             TransactionDto dto = transactionConverter.convertToDto(transaction);
             transactionDao.save(dto);
             transaction.setId(dto.getId()); // non-null id = persisted in the database.
-        } catch (CannotSaveEntityException ex) {
+        } catch (SaveForEntityFailedException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }

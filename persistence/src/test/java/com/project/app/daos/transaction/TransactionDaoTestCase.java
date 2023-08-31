@@ -2,9 +2,11 @@ package com.project.app.daos.transaction;
 
 import com.project.app.coredb.AbstractGenericDaoTestCase;
 import com.project.app.dtos.transaction.TransactionDto;
-import com.project.app.exceptions.CannotSaveEntityException;
 import java.util.List;
 import java.util.logging.Level;
+
+import com.project.app.exceptions.EntityAlreadyExistsException;
+import com.project.app.exceptions.SaveForEntityFailedException;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -46,7 +48,7 @@ public class TransactionDaoTestCase extends AbstractGenericDaoTestCase<Transacti
     /*
         Test should throw exception to pass.
      */
-    @Test(expected = CannotSaveEntityException.class)
+    @Test(expected = SaveForEntityFailedException.class)
     public void saveTransactionDtoWithNoFKTest() {
         LOGGER.log(Level.INFO, "In Save tx fail-test...");
         TransactionDto tx = txDao.loadById(getRandomId());
@@ -58,7 +60,7 @@ public class TransactionDaoTestCase extends AbstractGenericDaoTestCase<Transacti
     /*
     Test should throw exception to pass
      */
-    @Test(expected = CannotSaveEntityException.class)
+    @Test(expected = EntityAlreadyExistsException.class)
     public void saveTransactionDtoWithExistingIdTest() {
         LOGGER.log(Level.INFO, "In Save tx existing id fail-test...");
         TransactionDto tx = txDao.loadById(getRandomId());

@@ -105,11 +105,6 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
         return false;
     }
 
-    @Override
-    protected Long getEntityId(InstrumentDto entity) {
-        return entity.getId();
-    }
-
     private InstrumentDto getResults(ResultSet rs) throws SQLException {
         InstrumentDto inst = new InstrumentDto();
         inst.setId(rs.getLong("id"));

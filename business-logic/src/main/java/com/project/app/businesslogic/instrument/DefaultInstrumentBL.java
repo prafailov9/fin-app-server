@@ -7,11 +7,8 @@ import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.exceptions.CannotSaveEntityException;
-import com.project.app.exceptions.EntityConverterNotFoundException;
-import com.project.app.exceptions.NoRecordFoundException;
-import com.project.app.exceptions.NoSuchEntityException;
-import com.project.app.exceptions.NullIdException;
+import com.project.app.exceptions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,7 +39,7 @@ public class DefaultInstrumentBL implements InstrumentBL {
             InstrumentDto dto = instrumentConverter.convertToDto(instrument);
             instrumentDao.save(dto);
             instrument.setId(dto.getId()); // non-null id = persisted in the database.
-        } catch (CannotSaveEntityException | EntityValidationException ex) {
+        } catch (SaveForEntityFailedException | EntityValidationException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }

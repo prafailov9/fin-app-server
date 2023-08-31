@@ -5,7 +5,7 @@ import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
-import com.project.app.exceptions.CannotSaveEntityException;
+import com.project.app.exceptions.EntityAlreadyExistsException;
 import com.project.app.factory.DaoInstanceHolder;
 
 import java.sql.Connection;
@@ -97,14 +97,9 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
     @Override
     protected boolean containsReference(PositionDto entity) {
         if (Objects.isNull(entity.getInstrument()) || Objects.isNull(entity.getInstrument().getId())) {
-            throw new CannotSaveEntityException();
+            throw new EntityAlreadyExistsException("exists");
         }
         return true;
-    }
-
-    @Override
-    protected Long getEntityId(PositionDto entity) {
-        return entity.getId();
     }
 
     @Override

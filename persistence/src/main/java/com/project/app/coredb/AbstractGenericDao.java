@@ -29,10 +29,11 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
 
     @Override
     public T save(final T entity) {
+        requireNotExists(entity);
         if (containsReference(entity)) {
             return saveWithReference(entity);
         } else {
-            return saveNoReference(entity);
+            return plainSave(entity);
         }
     }
 
@@ -53,7 +54,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
 
             rs = pst.executeQuery();
             entity = getDatabaseResults(rs);
-            if (entity == null || getEntityId(entity) == null) {
+            if (entity == null || entity.getId() == null) {
                 throw new NoRecordFoundException();
             }
         } catch (SQLException ex) {
@@ -87,7 +88,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
     @Override
     public void delete(T entity) {
         Connection conn = null;
-        Long entityId = getEntityId(entity);
+        Long entityId = entity.getId();
         PreparedStatement pst = null;
         try {
             if (entityId == null) {
@@ -114,7 +115,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
     @Override
     public void update(final T entity) {
         try {
-            if (getEntityId(entity) == null) {
+            if (entity.getId() == null) {
                 throw new NoSuchEntityException();
             }
             runUpdateQuery(entity);
@@ -124,24 +125,23 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
     }
 
     private T saveWithReference(T entity) {
-        checkIfPersisted(entity);
         String query = buildInsertQueryWithForeignKeys(entity);
-        return runInsertQuery(entity, query);
+        return runSave(entity, query);
     }
 
-    private T saveNoReference(T entity) {
-        checkIfPersisted(entity);
+    private T plainSave(T entity) {
         String query = String.format(INSERT_QUERY, tableName, entity.toString());
-        return runInsertQuery(entity, query);
+        return runSave(entity, query);
     }
 
-    private void checkIfPersisted(T entity) {
-        if (getEntityId(entity) != null) {
-            throw new CannotSaveEntityException();
+    private void requireNotExists(T entity) {
+        Long id = entity.getId();
+        if (id != null) {
+            throw new EntityAlreadyExistsException(String.format("Entity from %s already exists whit id = %s", tableName, id));
         }
     }
 
-    private T runInsertQuery(T entity, String query) {
+    private T runSave(T entity, String query) {
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet keys = null;
@@ -157,7 +157,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, String.format("Could not create a record in %s", tableName), ex);
-            throw new CannotSaveEntityException();
+            throw new SaveForEntityFailedException();
         } finally {
             closeResources(keys, pst, conn);
         }
@@ -217,8 +217,6 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             throw new FailedToCloseDBResourcesException(ex);
         }
     }
-
-    protected abstract Long getEntityId(T entity);
 
     protected abstract void setEntityId(T entity, Long id);
 

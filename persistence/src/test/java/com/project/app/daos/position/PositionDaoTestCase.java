@@ -5,13 +5,14 @@ import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
-import com.project.app.exceptions.CannotSaveEntityException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.project.app.exceptions.EntityAlreadyExistsException;
+import com.project.app.exceptions.SaveForEntityFailedException;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -69,7 +70,7 @@ public class PositionDaoTestCase extends AbstractGenericDaoTestCase<PositionDto>
         LOGGER.log(Level.INFO, "Saved position with data {0}", saved.getDataAsString());
     }
 
-    @Test(expected = CannotSaveEntityException.class)
+    @Test(expected = EntityAlreadyExistsException.class)
     public void saveWithNullReferenceTest() {
         Timestamp t1 = Timestamp.valueOf(LocalDateTime.now());
         PositionDto dto = new PositionDto(t1, "payer", "receiver", 0, 0, null);
@@ -77,7 +78,7 @@ public class PositionDaoTestCase extends AbstractGenericDaoTestCase<PositionDto>
 
     }
 
-    @Test(expected = CannotSaveEntityException.class)
+    @Test(expected = EntityAlreadyExistsException.class)
     public void saveWithNoFKTest() {
         // instrument does not exist in db!
         InstrumentDto inst = new InstrumentDto("ddddddd", 23233,

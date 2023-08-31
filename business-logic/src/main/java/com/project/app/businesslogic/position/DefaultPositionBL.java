@@ -6,11 +6,8 @@ import com.project.app.daos.position.PositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.position.Position;
-import com.project.app.exceptions.CannotSaveEntityException;
-import com.project.app.exceptions.EntityConverterNotFoundException;
-import com.project.app.exceptions.NoRecordFoundException;
-import com.project.app.exceptions.NoSuchEntityException;
-import com.project.app.exceptions.NullIdException;
+import com.project.app.exceptions.*;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +35,7 @@ public class DefaultPositionBL implements PositionBL {
             PositionDto dto = positionConverter.convertToDto(position);
             positionDao.save(dto);
             position.setId(dto.getId()); // non-null id = persisted in the database.
-        } catch (CannotSaveEntityException ex) {
+        } catch (SaveForEntityFailedException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }
