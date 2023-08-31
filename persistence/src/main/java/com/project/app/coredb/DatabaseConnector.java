@@ -23,7 +23,7 @@ public class DatabaseConnector {
 
     private final static Logger LOGGER = Logger.getLogger(DatabaseConnector.class.getCanonicalName());
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
     private Properties properties;
 
     private DatabaseConnector(String propertiesFile) {
@@ -32,9 +32,7 @@ public class DatabaseConnector {
     }
 
     private static class InstanceHolder {
-
         static DatabaseConnector INSTANCE;
-
         static final void setInstance(final String properties) {
             INSTANCE = new DatabaseConnector(properties);
         }
