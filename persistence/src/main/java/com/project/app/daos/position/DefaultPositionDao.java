@@ -6,6 +6,8 @@ import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.exceptions.CannotSaveEntityException;
+import com.project.app.factory.DaoInstanceHolder;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,49 +17,51 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implements PositionDao {
 
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
 
-    private final static String SUBSELECT_INSTRUMENT_FK_SQL = "(SELECT * FROM instruments WHERE instruments.id=%s)";
-
     private final static String INSERT_WITH_FK_SQL = "INSERT INTO positions VALUES (%s)";
-
-    private final InstrumentDao instrumentDao;
 
     public DefaultPositionDao() {
         super("positions");
-        instrumentDao = new DefaultInstrumentDao();
     }
 
     @Override
-    public List<PositionDto> loadAllByTypeOfReference(InstrumentDto instrument) {
-
+    public List<PositionDto> loadAllByInstrumentType(InstrumentDto instrument) {
+        InstrumentDao instrumentDao = (InstrumentDao) DaoInstanceHolder.get("instrument");
         List<InstrumentDto> ins = instrumentDao.loadAllByType(instrument.getIntrumentType());
-        List<Long> fks = ins.stream().map(in -> in.getId()).collect(Collectors.toList());
-        List<PositionDto> positionsByReferenceType = new ArrayList<>();
-        fks.forEach((fk) -> {
-            positionsByReferenceType.addAll(loadAllByReference(fk));
-        });
-        return positionsByReferenceType;
+
+        List<Long> fks = ins.stream().map(InstrumentDto::getId).toList();
+
+        List<PositionDto> positions = new ArrayList<>();
+        fks.forEach((fk) -> positions.addAll(loadAllByReference(fk)));
+        return positions;
     }
 
     @Override
     public List<PositionDto> loadAllByReference(Long fk) {
         List<PositionDto> pos = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
         try {
+            conn = getConnection();
             String query = String.format(LOAD_ALL_BY_FK_QUERY, tableName, "fk_instrument");
-            PreparedStatement pst = getConnection().prepareStatement(query);
-            pst.setLong(1, fk);
-            ResultSet results = pst.executeQuery();
-            pos = getAllDatabaseResults(results);
+            pst = initPreparedStatement(query, conn, preparedStatement -> {
+               if (preparedStatement != null) {
+                   preparedStatement.setLong(1, fk);
+               }
+            });
+             rs = pst.executeQuery();
+            pos = getAllDatabaseResults(rs);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultPositionDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            return pos;
+            closeResources(rs, pst, conn);
         }
+        return pos;
     }
 
     @Override

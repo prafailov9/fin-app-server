@@ -6,6 +6,7 @@ import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.position.Position;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -15,16 +16,16 @@ import java.time.LocalDateTime;
  */
 public class PositionConverter implements EntityConverter<Position, PositionDto> {
 
-    private final InstrumentConverterFactory matcher;
+    private final InstrumentConverterFactory instrumentConverterFactory;
     private InstrumentConverter<Instrument, InstrumentDto> instrumentConverter;
 
     public PositionConverter() {
-        matcher = new InstrumentConverterFactory();
+        instrumentConverterFactory = new InstrumentConverterFactory();
     }
 
     @Override
     public Position convertToEntity(PositionDto dto) {
-        instrumentConverter = matcher.getConverter(dto.getInstrument().getIntrumentType());
+        instrumentConverter = instrumentConverterFactory.getConverter(dto.getInstrument().getIntrumentType());
         LocalDateTime ldt = getDateTimePersistenceConverter().convertToEntityAttribute(dto.getDealStartingDate());
         Instrument inst = instrumentConverter.convertToEntity(dto.getInstrument());
         Position pos = new Position();
@@ -42,7 +43,7 @@ public class PositionConverter implements EntityConverter<Position, PositionDto>
     @Override
     public PositionDto convertToDto(Position entity) {
         Timestamp tmp = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getStartingDateOfDeal());
-        instrumentConverter = matcher.getConverter(entity.getInstrument().getType());
+        instrumentConverter = instrumentConverterFactory.getConverter(entity.getInstrument().getType());
         PositionDto posDto = new PositionDto();
 
         posDto.setId(entity.getId());

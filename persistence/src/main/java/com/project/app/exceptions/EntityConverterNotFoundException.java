@@ -6,10 +6,10 @@ package com.project.app.exceptions;
  */
 public class EntityConverterNotFoundException extends RuntimeException {
 
-    private final static String MESSAGE = "Entity converter not found!";
+    private final static String MESSAGE = "Entity converter not found";
 
-    public EntityConverterNotFoundException() {
-        super();
+    public EntityConverterNotFoundException(String key) {
+        super(String.format("%s for provided key %s", MESSAGE, key));
     }
 
     @Override

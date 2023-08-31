@@ -1,9 +1,11 @@
 package com.project.app.dtos.position;
 
+import com.project.app.dtos.Entity;
 import com.project.app.dtos.instrument.InstrumentDto;
+
 import java.sql.Timestamp;
 
-public class PositionDto {
+public class PositionDto implements Entity {
     private Long id;
     private Timestamp dealStartingDate;
     private String payer;

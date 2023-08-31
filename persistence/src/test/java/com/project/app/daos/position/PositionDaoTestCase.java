@@ -1,6 +1,5 @@
 package com.project.app.daos.position;
 
-import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.coredb.AbstractGenericDaoTestCase;
 import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
@@ -140,7 +139,7 @@ public class PositionDaoTestCase extends AbstractGenericDaoTestCase<PositionDto>
     @Test
     public void loadAllByTypeOfReferenceTest() {
         InstrumentDto ins = posDao.loadById(getRandomId()).getInstrument();
-        List<PositionDto> dtos = posDao.loadAllByTypeOfReference(ins);
+        List<PositionDto> dtos = posDao.loadAllByInstrumentType(ins);
         assertNotNull(dtos);
 
         boolean actual = dtos.stream().allMatch(dto -> dto.getInstrument().getIntrumentType().equalsIgnoreCase(ins.getIntrumentType()));

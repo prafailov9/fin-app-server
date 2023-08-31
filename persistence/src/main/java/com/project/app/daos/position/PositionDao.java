@@ -9,6 +9,6 @@ public interface PositionDao extends GenericDao<PositionDto> {
     
     List<PositionDto> loadAllByReference(Long fk);
     
-    List<PositionDto> loadAllByTypeOfReference(InstrumentDto instrument);
+    List<PositionDto> loadAllByInstrumentType(InstrumentDto instrument);
     
 }

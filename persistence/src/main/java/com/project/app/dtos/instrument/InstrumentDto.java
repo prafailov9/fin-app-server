@@ -1,8 +1,10 @@
 package com.project.app.dtos.instrument;
 
+import com.project.app.dtos.Entity;
+
 import java.sql.Timestamp;
 
-public class InstrumentDto {
+public class InstrumentDto implements Entity {
 
     private Long id;
     private String instrumentName;

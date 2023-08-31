@@ -1,10 +1,11 @@
 package com.project.app.dtos.transaction;
 
+import com.project.app.dtos.Entity;
 import com.project.app.dtos.position.PositionDto;
 
 import java.sql.Timestamp;
 
-public class TransactionDto {
+public class TransactionDto implements Entity {
 
     private Long id;
     private double amount;

@@ -30,7 +30,7 @@ public class InstrumentConverterFactory {
             InstrumentConverter converter = Objects.requireNonNull(CONVERTER_MAP.get(key));
             return converter;
         } catch (NullPointerException ex) {
-            throw new EntityConverterNotFoundException();
+            throw new EntityConverterNotFoundException(key);
         }
     }
 

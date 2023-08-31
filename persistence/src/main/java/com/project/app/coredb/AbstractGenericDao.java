@@ -1,25 +1,18 @@
 package com.project.app.coredb;
 
-import com.project.app.exceptions.CannotSaveEntityException;
-import com.project.app.exceptions.NoRecordFoundException;
-import com.project.app.exceptions.NoSuchEntityException;
-import com.project.app.exceptions.PrepareStatementFailedException;
+import com.project.app.dtos.Entity;
+import com.project.app.exceptions.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @param <T>
+ * @param <T> - Dtos should implement the Entity interface
  * @author Plamen
  */
-public abstract class AbstractGenericDao<T> implements GenericDao<T> {
+public abstract class AbstractGenericDao<T extends Entity> implements GenericDao<T> {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractGenericDao.class.getCanonicalName());
 
@@ -121,14 +114,13 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
     @Override
     public void update(final T entity) {
         try {
-            if (Objects.isNull(getEntityId(entity))) {
+            if (getEntityId(entity) == null) {
                 throw new NoSuchEntityException();
             }
             runUpdateQuery(entity);
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, String.format("Could not update a record in %s", tableName), ex);
         }
-
     }
 
     private T saveWithReference(T entity) {
@@ -188,6 +180,8 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
     protected PreparedStatement initPreparedStatement(final String sql, Connection connection, PreparedStatementBinder binder) throws SQLException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            // will bind different params based on the current operation
             if (binder != null) {
                 binder.bind(preparedStatement);
             }
@@ -218,8 +212,9 @@ public abstract class AbstractGenericDao<T> implements GenericDao<T> {
             if (connection != null) {
                 connection.close();
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to close resources", e);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to close resources", ex);
+            throw new FailedToCloseDBResourcesException(ex);
         }
     }
 
