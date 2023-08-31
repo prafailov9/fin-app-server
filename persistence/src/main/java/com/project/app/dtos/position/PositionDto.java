@@ -84,7 +84,7 @@ public class PositionDto implements Entity {
         this.positionVolume = positionVolume;
     }
 
-    // lists formatted data for sql queries. has additional check on if instrument reference exists.
+    // lists formatted data for sql queries. has additional check if instrument reference exists.
     public String getDataAsString() {
         String positionString = toString();
         if (instrument == null || instrument.getId() == null) {

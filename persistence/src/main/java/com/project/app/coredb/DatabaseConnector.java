@@ -15,9 +15,8 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 
-/*
-    Class for creating a database connection without knowing the underlying RDBMS.
-    Only one unique instance of this class can exist at any given time.
+/**
+    Lazy-loaded Singleton for caching a DB connection pool. Works with any RDBMS.
  */
 public class DatabaseConnector {
 
@@ -33,7 +32,7 @@ public class DatabaseConnector {
 
     private static class InstanceHolder {
         static DatabaseConnector INSTANCE;
-        static final void setInstance(final String properties) {
+        static void setInstance(final String properties) {
             INSTANCE = new DatabaseConnector(properties);
         }
     }

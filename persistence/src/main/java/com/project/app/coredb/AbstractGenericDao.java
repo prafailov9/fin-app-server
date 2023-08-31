@@ -93,17 +93,16 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         try {
             if (entityId == null) {
                 throw new NoSuchEntityException();
-            } else {
-                conn = getConnection();
-                String query = String.format(DELETE_QUERY, tableName);
-                pst = initPreparedStatement(query, conn, preparedStatement -> {
-                    if (preparedStatement != null) {
-                        preparedStatement.setLong(1, entityId);
-                    }
-                });
-                pst.executeUpdate();
-                setEntityId(entity, null);
             }
+            conn = getConnection();
+            String query = String.format(DELETE_QUERY, tableName);
+            pst = initPreparedStatement(query, conn, preparedStatement -> {
+                if (preparedStatement != null) {
+                    preparedStatement.setLong(1, entityId);
+                }
+            });
+            pst.executeUpdate();
+            setEntityId(entity, null);
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, String.format("Could not delete record with id=%s from %s", entityId, tableName), ex);
@@ -173,7 +172,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
      *
      * @param sql        - query
      * @param connection - db conn
-     * @param binder     - binding params based on the db operation
+     * @param binder     - binding params
      * @return preparedStatement
      * @throws PrepareStatementFailedException -
      */
@@ -194,7 +193,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
     }
 
     /**
-     * Method to close the db resources once used. If not closed, these objects might potentially create memory leaks
+     * Method to close the db resources once used. If not closed, these objects might create memory leaks
      * and other unwanted behavior.
      *
      * @param resultSet         - result set

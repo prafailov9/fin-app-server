@@ -126,7 +126,7 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         if (entity.getInstrument() == null || entity.getInstrument().getId() == null) {
             throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
         }
-        // entity.toString() is invoked
+
         String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
         LOGGER.log(Level.INFO, "Built insert query: {0}", insertQuery);
 
