@@ -15,7 +15,7 @@ public class DateAdderFactory {
     private static final Map<String, DateAdder> FREQUENCY_MAP = createFrequencyMap();
 
     private static Map<String, DateAdder> createFrequencyMap() {
-        Map<String, DateAdder> map = new HashMap<>();
+        Map<String, DateAdder> map;
         map = new HashMap<>();
         map.put("daily", new DayAdder());
         map.put("weekly", new WeekAdder());

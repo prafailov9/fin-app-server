@@ -53,8 +53,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
         /*
             Creating a Result object which contains the calculation results and other data;
          */
-        CreditResultObject creditResultObject = new CreditResultObject(intPayments, position, instrumentType, prPayments);
-        return creditResultObject;
+        return new CreditResultObject(intPayments, position, instrumentType, prPayments);
     }
 
     @Override
@@ -67,8 +66,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
     }
 
     private double calculatePrincipal(double volume, int numberOfPayments) {
-        double principal = volume / numberOfPayments;
-        return principal;
+        return volume / numberOfPayments;
     }
 
     public Map<LocalDateTime, Double> calculateInterestPayments(CreditInstrument instrument, List<Transaction> transactions,

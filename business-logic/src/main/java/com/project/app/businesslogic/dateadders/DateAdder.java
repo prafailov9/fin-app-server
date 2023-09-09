@@ -10,8 +10,7 @@ import java.time.temporal.ChronoUnit;
 public abstract class DateAdder {
 
     public LocalDateTime addToDate(LocalDateTime date, int timeAmount) {
-        LocalDateTime nextDate = date.plus(timeAmount, getTimeUnit());
-        return nextDate;
+        return date.plus(timeAmount, getTimeUnit());
     }
 
     protected abstract ChronoUnit getTimeUnit();
