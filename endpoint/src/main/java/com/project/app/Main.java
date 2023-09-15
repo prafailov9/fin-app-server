@@ -42,7 +42,7 @@ public class Main {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         DatabaseConnector.initialize(DB_PROPERTIES_PATH);
 //        DatabaseBuilder.recreateDatabase(DatabaseConnection.getConnection());
         final HttpServer server = startServer();
