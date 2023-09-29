@@ -5,6 +5,8 @@ import com.project.app.daos.position.DefaultPositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.dtos.transaction.TransactionDto;
 import com.project.app.exceptions.SaveForEntityFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,10 +15,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> implements TransactionDao {
+
+    protected static final Logger log = LoggerFactory.getLogger(DefaultTransactionDao.class);
 
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
 
@@ -36,7 +38,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
             ResultSet results = pst.executeQuery();
             transactions = getAllDatabaseResults(results);
         } catch (SQLException ex) {
-            Logger.getLogger(DefaultTransactionDao.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Failed to load transactions for positionId: {}", fk, ex);
         } finally {
             return transactions;
 
@@ -81,7 +83,9 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     protected void runUpdateQuery(TransactionDto entity) throws SQLException {
         Connection conn = getConnection();
         String sql = "update " + tableName + " set id=?, amount=?, sign=?, transaction_date=?, fk_position=? where id=" + entity.getId() + ";";
-        LOGGER.log(Level.INFO, "Update query: {0}", sql);
+
+        log.info("Update query: {}", sql);
+
         PreparedStatement pst = conn.prepareStatement(sql);
         pst.setLong(1, entity.getId());
         pst.setDouble(2, entity.getAmount());
@@ -98,7 +102,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
             throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
         }
         String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
-        LOGGER.log(Level.INFO, "Built insert query: {0}", insertQuery);
+        log.info("Built insert query: {}", insertQuery);
 
         return insertQuery;
     }

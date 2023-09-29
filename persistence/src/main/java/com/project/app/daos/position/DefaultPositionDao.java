@@ -7,6 +7,8 @@ import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.exceptions.EntityAlreadyExistsException;
 import com.project.app.factory.DaoInstanceHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,10 +17,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implements PositionDao {
+
+    protected static final Logger log = LoggerFactory.getLogger(DefaultPositionDao.class);
 
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
 
@@ -57,7 +59,7 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
              rs = pst.executeQuery();
             pos = getAllDatabaseResults(rs);
         } catch (SQLException ex) {
-            Logger.getLogger(DefaultPositionDao.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Failed to load positions for instrumentId: {}", fk, ex);
         } finally {
             closeResources(rs, pst, conn);
         }
@@ -107,7 +109,8 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         Connection conn = getConnection();
         String query = "update " + tableName + " set id=?, deal_start_date=?, payer_name=?, "
                 + "receiver_name=?, principal=?, position_volume=?, fk_instrument=? where id=" + entity.getId() + ";";
-        LOGGER.log(Level.INFO, "Update query: {0}", query);
+        log.info("Update query: {}", query);
+
         PreparedStatement pst = conn.prepareStatement(query);
         pst.setLong(1, entity.getId());
         pst.setTimestamp(2, entity.getDealStartingDate());
@@ -117,13 +120,13 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         pst.setDouble(6, entity.getPositionVolume());
         pst.setLong(7, entity.getInstrument().getId());
         int affectedRows = pst.executeUpdate();
-        LOGGER.log(Level.INFO, "Affected rows after position Update: {0}", affectedRows);
+        log.info("Affected rows after position Update: {}", affectedRows);
     }
 
     protected PreparedStatement prepareUpdate(PositionDto entity) throws SQLException {
         String query = "update " + tableName + " set id=?, deal_start_date=?, payer_name=?, "
                 + "receiver_name=?, principal=?, position_volume=?, fk_instrument=? where id=" + entity.getId() + ";";
-        LOGGER.log(Level.INFO, "Update query: {0}", query);
+        log.info("Update query: {}", query);
 
         return initPreparedStatement(query, getConnection(), pst -> {
             pst.setLong(1, entity.getId());
@@ -144,7 +147,7 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         }
 
         String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
-        LOGGER.log(Level.INFO, "Built insert query: {0}", insertQuery);
+        log.info("Built insert query: {}", insertQuery);
 
         return insertQuery;
     }

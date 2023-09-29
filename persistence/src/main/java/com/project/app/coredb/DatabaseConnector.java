@@ -2,6 +2,9 @@ package com.project.app.coredb;
 
 import com.project.app.exceptions.CannotLoadPropertiesException;
 import com.project.app.exceptions.ConnectorNotInitException;
+import org.apache.commons.dbcp.BasicDataSource;
+
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -11,9 +14,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.sql.DataSource;
-import org.apache.commons.dbcp.BasicDataSource;
 
 /**
     Lazy-loaded Singleton for caching a DB connection pool. Works with any RDBMS.

@@ -2,18 +2,20 @@ package com.project.app.daos.instrument;
 
 import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.dtos.instrument.InstrumentDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> implements InstrumentDao {
 
-    private final static String SELECT_ONE_BY_NAME_QUERY = "select * from instruments where name='?'";
+    protected static final Logger log = LoggerFactory.getLogger(DefaultInstrumentDao.class);
+    private static final String SELECT_ONE_BY_NAME_QUERY = "select * from instruments where name='?'";
 
     public DefaultInstrumentDao() {
         super("instruments");
@@ -21,18 +23,16 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
 
     @Override
     public List<InstrumentDto> loadAllByType(final String type) {
-        List<InstrumentDto> instrumentsByType = null;
         try {
             String query = "select * from instruments where instrument_type=?";
             PreparedStatement pst = getConnection().prepareStatement(query);
             pst.setString(1, type);
             ResultSet results = pst.executeQuery();
-            instrumentsByType = getAllDatabaseResults(results);
-            return instrumentsByType;
+            return getAllDatabaseResults(results);
         } catch (SQLException ex) {
-            Logger.getLogger(DefaultInstrumentDao.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        return instrumentsByType;
+            log.error("Could not load instruments by given type: {}", type, ex);
+        }
+        return null;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
             dto = getDatabaseResults(rs);
             return dto;
         } catch (SQLException ex) {
-            Logger.getLogger(DefaultInstrumentDao.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Could not load instrument by given name: {}", name, ex);
         }
         return null;
     }
@@ -67,7 +67,8 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
         String query = "update " + tableName + " set id=?, instrument_name=?, interest_rate=?, "
                 + "start_payment_date=?, end_payment_date=?, interest_frequency=?, "
                 + "principal_frequency=?, instrument_type=? where id=" + entity.getId();
-        LOGGER.log(Level.INFO, "Update query: {0}", query);
+        log.info("Update query: {}", query);
+
         PreparedStatement pst = conn.prepareStatement(query);
         pst.setLong(1, entity.getId());
         pst.setString(2, entity.getInstrumentName());

@@ -2,11 +2,11 @@ package com.project.app.coredb;
 
 import com.project.app.dtos.Entity;
 import com.project.app.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @param <T> - Dtos should implement the Entity interface
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractGenericDao<T extends Entity> implements GenericDao<T> {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractGenericDao.class.getCanonicalName());
+    protected static final Logger log = LoggerFactory.getLogger(AbstractGenericDao.class);
 
     private static final String INSERT_QUERY = "insert into %s values (%s)";
     private static final String DELETE_QUERY = "delete from %s where id=?";
@@ -55,7 +55,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
                 throw new NoRecordFoundException();
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, String.format("Could not load a record with id=%s from %s", id, tableName), ex);
+            log.error("Could not load a record with id={} from {}", id, tableName, ex);
         } finally {
             closeResources(rs, pst, conn);
         }
@@ -75,7 +75,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
 
             return getAllDatabaseResults(rs);
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, String.format("Could not load all records from %s", tableName), ex);
+            log.error("Could not load all records from {}", tableName, ex);
         } finally {
             closeResources(rs, pst, conn);
         }
@@ -99,7 +99,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             setEntityId(entity, null);
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, String.format("Could not delete record with id=%s from %s", entityId, tableName), ex);
+            log.error("Could not delete record with id={} from {}", entityId, tableName, ex);
         } finally {
             closeResources(null, pst, conn);
         }
@@ -113,7 +113,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             }
             runUpdateQuery(entity);
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, String.format("Could not update a record in %s", tableName), ex);
+            log.error("Could not update a record in {}", tableName, ex);
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         ResultSet keys = null;
         try {
             conn = getConnection();
-            LOGGER.log(Level.INFO, "Query: {0}", query);
+            log.info("Query: {}", query);
             pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pst.executeUpdate();
             keys = pst.getGeneratedKeys();
@@ -149,7 +149,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
                 setEntityId(entity, id);
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, String.format("Could not create a record in %s", tableName), ex);
+            log.error("Could not create a record in {}", tableName, ex);
             throw new SaveForEntityFailedException();
         } finally {
             closeResources(keys, pst, conn);
@@ -181,7 +181,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             return preparedStatement;
         } catch (SQLException ex) {
             String error = String.format("Error during preparing sql statement %s", sql);
-            LOGGER.log(Level.SEVERE, error, ex);
+            log.error(error, ex);
             throw new PrepareStatementFailedException(error, ex.getCause());
         }
     }
@@ -206,7 +206,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
                 connection.close();
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to close resources", ex);
+            log.error("Failed to close resources", ex);
             throw new FailedToCloseDBResourcesException(ex);
         }
     }
