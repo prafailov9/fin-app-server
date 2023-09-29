@@ -120,6 +120,22 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         LOGGER.log(Level.INFO, "Affected rows after position Update: {0}", affectedRows);
     }
 
+    protected PreparedStatement prepareUpdate(PositionDto entity) throws SQLException {
+        String query = "update " + tableName + " set id=?, deal_start_date=?, payer_name=?, "
+                + "receiver_name=?, principal=?, position_volume=?, fk_instrument=? where id=" + entity.getId() + ";";
+        LOGGER.log(Level.INFO, "Update query: {0}", query);
+
+        return initPreparedStatement(query, getConnection(), pst -> {
+            pst.setLong(1, entity.getId());
+            pst.setTimestamp(2, entity.getDealStartingDate());
+            pst.setString(3, entity.getPayer());
+            pst.setString(4, entity.getReceiver());
+            pst.setDouble(5, entity.getPrincipal());
+            pst.setDouble(6, entity.getPositionVolume());
+            pst.setLong(7, entity.getInstrument().getId());
+        });
+    }
+
     @Override
     protected String buildInsertQueryWithForeignKeys(PositionDto entity) {
         // check if fk is null

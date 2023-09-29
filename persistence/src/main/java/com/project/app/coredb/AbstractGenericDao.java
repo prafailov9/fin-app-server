@@ -46,11 +46,8 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         try {
             conn = getConnection();
             String query = String.format(LOAD_ONE_QUERY, tableName);
-            pst = initPreparedStatement(query, conn, preparedStatement -> {
-                if (preparedStatement != null) {
-                    preparedStatement.setLong(1, id);
-                }
-            });
+            pst = initPreparedStatement(query, conn,
+                    preparedStatement -> preparedStatement.setLong(1, id));
 
             rs = pst.executeQuery();
             entity = getDatabaseResults(rs);
@@ -96,11 +93,8 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             }
             conn = getConnection();
             String query = String.format(DELETE_QUERY, tableName);
-            pst = initPreparedStatement(query, conn, preparedStatement -> {
-                if (preparedStatement != null) {
-                    preparedStatement.setLong(1, entityId);
-                }
-            });
+            pst = initPreparedStatement(query, conn,
+                    preparedStatement -> preparedStatement.setLong(1, entityId));
             pst.executeUpdate();
             setEntityId(entity, null);
 

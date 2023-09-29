@@ -11,16 +11,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class DaoInstanceHolder {
 
-    private static final ConcurrentHashMap<String, GenericDao<? extends Entity>> daoCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, GenericDao<? extends Entity>> DAO_CACHE = new ConcurrentHashMap<>();
 
     static {
-        daoCache.put("instrument", new DefaultInstrumentDao());
-        daoCache.put("position", new DefaultPositionDao());
-        daoCache.put("transaction", new DefaultTransactionDao());
+        DAO_CACHE.put("instrument", new DefaultInstrumentDao());
+        DAO_CACHE.put("position", new DefaultPositionDao());
+        DAO_CACHE.put("transaction", new DefaultTransactionDao());
     }
 
     public static GenericDao<? extends Entity> get(final String key) {
-        GenericDao<? extends Entity> dao = daoCache.get(key);
+        GenericDao<? extends Entity> dao = DAO_CACHE.get(key);
         if (dao == null) {
             throw new InvalidKeyException(key);
         }
