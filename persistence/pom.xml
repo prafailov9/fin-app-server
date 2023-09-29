@@ -2,7 +2,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
     <parent>
         <groupId>com.project.app</groupId>
         <artifactId>multi-module-server</artifactId>
@@ -15,7 +14,8 @@
 
     <dependencies>
 
-		
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
@@ -23,22 +23,21 @@
             <version>8.0.33</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <!--<scope>test</scope>-->
             <version>2.7.1</version>
         </dependency>
-		
+
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>sqltool</artifactId>
             <version>2.7.1</version>
             <type>jar</type>
         </dependency>
-        
-        
+
+
         <!-- https://mvnrepository.com/artifact/org.apache.ibatis/ibatis-core -->
         <dependency>
             <groupId>org.apache.ibatis</groupId>
@@ -46,7 +45,7 @@
             <version>3.0</version>
         </dependency>
 
-		
+
         <dependency>
             <groupId>com.project.app</groupId>
             <artifactId>domain-model</artifactId>
@@ -58,5 +57,5 @@
             <version>1.4</version>
         </dependency>
     </dependencies>
-    
+
 </project>
