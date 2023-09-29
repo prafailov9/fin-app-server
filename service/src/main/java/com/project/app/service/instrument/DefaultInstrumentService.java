@@ -19,15 +19,15 @@ import java.util.stream.Collectors;
  *
  * @author p.rafailov
  */
-public class DefaultInstrumentBL implements InstrumentBL {
+public class DefaultInstrumentService implements InstrumentService {
 
-    private final static Logger LOGGER = Logger.getLogger(DefaultInstrumentBL.class.getCanonicalName());
+    private final static Logger LOGGER = Logger.getLogger(DefaultInstrumentService.class.getCanonicalName());
 
     private final InstrumentDao instrumentDao;
     private InstrumentConverter<Instrument, InstrumentDto> instrumentConverter;
     private final InstrumentConverterFactory converterFactory;
 
-    public DefaultInstrumentBL() {
+    public DefaultInstrumentService() {
         this.instrumentDao = new DefaultInstrumentDao();
         this.converterFactory = new InstrumentConverterFactory();
     }

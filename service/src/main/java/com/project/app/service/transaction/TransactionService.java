@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author p.rafailov
  */
-public interface TransactionBL {
+public interface TransactionService {
 
     void insertTransaction(Transaction transaction);
 

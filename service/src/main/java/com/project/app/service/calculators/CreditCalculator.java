@@ -3,8 +3,8 @@ package com.project.app.service.calculators;
 import com.project.app.service.dateadders.DateAdder;
 import com.project.app.service.dateadders.DateAdderFactory;
 import com.project.app.service.results.CreditResultObject;
-import com.project.app.service.transaction.DefaultTransactionBL;
-import com.project.app.service.transaction.TransactionBL;
+import com.project.app.service.transaction.DefaultTransactionService;
+import com.project.app.service.transaction.TransactionService;
 import com.project.app.service.validators.CreditInstrumentValidator;
 import com.project.app.service.validators.PositionValidator;
 import com.project.app.service.validators.TransactionValidator;
@@ -22,12 +22,12 @@ import java.util.TreeMap;
 public class CreditCalculator implements Calculator<CreditResultObject> {
 
     private final DateAdderFactory factory;
-    private final TransactionBL tbl;
+    private final TransactionService tbl;
     private double debt;
 
     public CreditCalculator() {
         factory = new DateAdderFactory();
-        tbl = new DefaultTransactionBL();
+        tbl = new DefaultTransactionService();
     }
 
     /*

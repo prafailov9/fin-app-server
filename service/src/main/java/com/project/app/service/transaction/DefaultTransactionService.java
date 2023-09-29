@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
  *
  * @author p.rafailov
  */
-public class DefaultTransactionBL implements TransactionBL {
+public class DefaultTransactionService implements TransactionService {
 
-    private final static Logger LOGGER = Logger.getLogger(DefaultTransactionBL.class.getCanonicalName());
+    private final static Logger LOGGER = Logger.getLogger(DefaultTransactionService.class.getCanonicalName());
 
     private final TransactionConverter transactionConverter;
     private final TransactionDao transactionDao;
 
-    public DefaultTransactionBL() {
+    public DefaultTransactionService() {
         this.transactionDao = new DefaultTransactionDao();
         this.transactionConverter = new TransactionConverter();
     }

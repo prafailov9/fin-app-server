@@ -7,7 +7,7 @@ import com.project.app.entities.position.Position;
  *
  * @author prafailov
  */
-public interface CalculationBL {
+public interface CalculationService {
 
     ResultObject getDepositCalculationResults(Position position);
 

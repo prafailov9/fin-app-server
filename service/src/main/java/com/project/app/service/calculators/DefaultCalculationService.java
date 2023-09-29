@@ -9,7 +9,7 @@ import com.project.app.entities.position.Position;
  *
  * @author prafailov
  */
-public class DefaultCalculationBL implements CalculationBL {
+public class DefaultCalculationService implements CalculationService {
 
     @Override
     public ResultObject getDepositCalculationResults(Position position) {

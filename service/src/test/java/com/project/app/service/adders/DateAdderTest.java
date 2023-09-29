@@ -1,23 +1,24 @@
 package com.project.app.service.adders;
 
+import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.service.dateadders.DateAdder;
 import com.project.app.service.dateadders.DateAdderFactory;
 import com.project.app.service.parsers.DateTimeValuesGenerator;
-import com.project.app.entities.instrument.frequency.Frequency;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  *
  * @author prafailov
  */
-public class DateAdderTestCase {
-
+public class DateAdderTest {
     private DateAdder adder;
     private DateAdderFactory factory;
     private DateTimeValuesGenerator gen;
@@ -38,7 +39,6 @@ public class DateAdderTestCase {
 
     @Test
     public void createAdderTest() {
-
         Frequency weekly = Frequency.WEEKLY;
         Frequency monthly = Frequency.MONTHLY;
 

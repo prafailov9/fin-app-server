@@ -1,41 +1,43 @@
 package com.project.app.service.calculators;
 
-import com.project.app.service.AbstractEntityBLTestCase;
-import com.project.app.service.adapters.JsonMapAdapter;
-import com.project.app.service.position.DefaultPositionBL;
-import com.project.app.service.position.PositionBL;
-import com.project.app.service.results.ResultObject;
 import com.project.app.entities.instrument.DepositInstrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Sign;
 import com.project.app.entities.transaction.Transaction;
+import com.project.app.service.AbstractServiceTest;
+import com.project.app.service.adapters.JsonMapAdapter;
+import com.project.app.service.position.DefaultPositionService;
+import com.project.app.service.position.PositionService;
+import com.project.app.service.results.ResultObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static junit.framework.Assert.assertNotNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  *
  * @author prafailov
  */
-public class DepositCalculatorTestCase extends AbstractEntityBLTestCase {
+public class DepositCalculatorTest extends AbstractServiceTest {
 
     private final static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     private DepositCalculator dc;
     private DepositInstrument dep;
     private Position pos;
     private Transaction tx;
-    private PositionBL pbl;
+    private PositionService pbl;
 
     @Before
     public void setUp() {
         dc = new DepositCalculator();
-        pbl = new DefaultPositionBL();
+        pbl = new DefaultPositionService();
         dep = new DepositInstrument("depositInstName", LocalDateTime.parse("12/12/2012 12:12:12", DTF),
                 LocalDateTime.parse("12/12/2022 12:12:12", DTF), 0.05, Frequency.ANNUALLY);
         pos = new Position(LocalDateTime.parse("12/12/2012 12:12:12", DTF), "somePayer", "someReceiver", dep, 0);

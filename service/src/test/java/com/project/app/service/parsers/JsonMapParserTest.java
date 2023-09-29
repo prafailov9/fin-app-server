@@ -1,24 +1,21 @@
 package com.project.app.service.parsers;
 
 import com.google.gson.JsonElement;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
-
-import com.project.app.service.parsers.DateTimeValuesGenerator;
-import com.project.app.service.parsers.JsonMapParser;
 import org.junit.After;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
  * @author prafailov
  */
-public class JsonMapParserTestCase {
+public class JsonMapParserTest {
 
-    private final static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final static int MAP_SIZE = 20;
     private Map<LocalDateTime, Double> data;
     private JsonMapParser<LocalDateTime, Double> parser;
@@ -26,7 +23,7 @@ public class JsonMapParserTestCase {
 
     @Before
     public void setUp() {
-        parser = new JsonMapParser();
+        parser = new JsonMapParser<>();
         gen = new DateTimeValuesGenerator();
         data = gen.generateRandomData(MAP_SIZE);
 
@@ -41,10 +38,7 @@ public class JsonMapParserTestCase {
 
     @Test
     public void parseResultsToJsonTest() {
-
         String jsonMap = parser.toJsonString(data);
-        System.out.println(jsonMap);
-
         assertNotNull(jsonMap);
     }
 
@@ -57,7 +51,6 @@ public class JsonMapParserTestCase {
 
     @Test
     public void parseToJsonElementTest() {
-
         JsonElement jo = parser.toJsonElement(data);
         assertNotNull(jo.toString());
     }

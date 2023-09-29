@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author p.rafailov
  */
-public interface PositionBL {
+public interface PositionService {
 
     void insertPosition(Position position);
 

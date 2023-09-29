@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
  *
  * @author p.rafailov
  */
-public class DefaultPositionBL implements PositionBL {
+public class DefaultPositionService implements PositionService {
 
-    private final static Logger LOGGER = Logger.getLogger(DefaultPositionBL.class.getCanonicalName());
+    private final static Logger LOGGER = Logger.getLogger(DefaultPositionService.class.getCanonicalName());
 
     private final PositionDao positionDao;
     private final PositionConverter positionConverter;
 
-    public DefaultPositionBL() {
+    public DefaultPositionService() {
         this.positionDao = new DefaultPositionDao();
         this.positionConverter = new PositionConverter();
     }

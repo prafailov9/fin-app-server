@@ -3,8 +3,8 @@ package com.project.app.service.calculators;
 import com.project.app.service.dateadders.DateAdder;
 import com.project.app.service.dateadders.DateAdderFactory;
 import com.project.app.service.results.DepositResultObject;
-import com.project.app.service.transaction.DefaultTransactionBL;
-import com.project.app.service.transaction.TransactionBL;
+import com.project.app.service.transaction.DefaultTransactionService;
+import com.project.app.service.transaction.TransactionService;
 import com.project.app.service.validators.DepositInstrumentValidator;
 import com.project.app.service.validators.PositionValidator;
 import com.project.app.service.validators.TransactionValidator;
@@ -22,11 +22,11 @@ public class DepositCalculator implements Calculator<DepositResultObject> {
 
     private DateAdder dateAdder;
     private final DateAdderFactory factory;
-    private final TransactionBL tbl;
+    private final TransactionService tbl;
 
     public DepositCalculator() {
         factory = new DateAdderFactory();
-        tbl = new DefaultTransactionBL();
+        tbl = new DefaultTransactionService();
     }
 
     @Override

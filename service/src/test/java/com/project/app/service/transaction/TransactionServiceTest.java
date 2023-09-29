@@ -1,38 +1,37 @@
 package com.project.app.service.transaction;
 
-import com.project.app.service.AbstractEntityBLTestCase;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-
+import com.project.app.service.AbstractServiceTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TransactionBLTestCase extends AbstractEntityBLTestCase {
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
-    private TransactionBL tbl;
+import static junit.framework.Assert.*;
+
+public class TransactionServiceTest extends AbstractServiceTest {
+
+    private TransactionService transactionService;
 
     @Before
     public void setUp() {
-        tbl = new DefaultTransactionBL();
+        transactionService = new DefaultTransactionService();
     }
 
     @After
     public void tearDown() {
-        tbl = null;
+        transactionService = null;
     }
 
     @Test
     public void getTxTest() {
         Long id = getRandomId();
-        Transaction tx = tbl.getTransaction(id);
+        Transaction tx = transactionService.getTransaction(id);
         LOGGER.log(Level.INFO, "Retreived Transaction: {0}", tx);
         assertNotNull(tx);
         assertNotNull(tx.getId());
@@ -42,7 +41,7 @@ public class TransactionBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void getAllTxs() {
 
-        List<Transaction> txs = tbl.getAllTransactions();
+        List<Transaction> txs = transactionService.getAllTransactions();
         LOGGER.log(Level.INFO, "Results count: {0}", txs.size());
         assertNotNull(txs);
         assertEquals(txs.size(), getAllIds().size());
@@ -51,9 +50,9 @@ public class TransactionBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void insertTx() {
         Long id = getRandomId();
-        Transaction tx = tbl.getTransaction(id);
+        Transaction tx = transactionService.getTransaction(id);
         tx.setId(null);
-        tbl.insertTransaction(tx);
+        transactionService.insertTransaction(tx);
         LOGGER.log(Level.INFO, "Saved transaction: {0}", tx);
         assertNotNull(tx);
         assertNotNull(tx.getId());
@@ -64,11 +63,11 @@ public class TransactionBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void updateTx() {
         Long id = getRandomId();
-        Transaction tx = tbl.getTransaction(id);
+        Transaction tx = transactionService.getTransaction(id);
         LocalDateTime newDate = LocalDateTime.of(2012, 12, 12, 12, 12);
         tx.setTransactionDate(newDate);
-        tbl.updateTransaction(tx);
-        Transaction newTx = tbl.getTransaction(tx.getId());
+        transactionService.updateTransaction(tx);
+        Transaction newTx = transactionService.getTransaction(tx.getId());
         LOGGER.log(Level.ALL, "Updated transaction: {0}", newTx);
         assertEquals(tx.getTransactionDate().toString(), newTx.getTransactionDate().toString());
     }
@@ -76,16 +75,16 @@ public class TransactionBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void deleteTx() {
         Long id = getRandomId();
-        Transaction tx = tbl.getTransaction(id);
-        tbl.deleteTransaction(tx);
+        Transaction tx = transactionService.getTransaction(id);
+        transactionService.deleteTransaction(tx);
         LOGGER.log(Level.INFO, "Deleted transaction: {0}", tx);
         assertEquals(tx.getId(), null);
     }
 
     @Test
     public void getAllTxsByPosition() {
-        Position position = tbl.getTransaction(getRandomId()).getPosition();
-        List<Transaction> txs = tbl.getAllTransactionsByPosition(position);
+        Position position = transactionService.getTransaction(getRandomId()).getPosition();
+        List<Transaction> txs = transactionService.getAllTransactionsByPosition(position);
 
         boolean actual = txs.stream().allMatch(tx -> tx.getPosition().equals(position));
 
@@ -94,7 +93,7 @@ public class TransactionBLTestCase extends AbstractEntityBLTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        List<Long> ids = tbl.getAllTransactions().stream().map(tx -> tx.getId()).collect(Collectors.toList());
+        List<Long> ids = transactionService.getAllTransactions().stream().map(tx -> tx.getId()).collect(Collectors.toList());
         return ids;
     }
 }

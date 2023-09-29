@@ -13,7 +13,6 @@
     <packaging>jar</packaging>
     <name>domain-model</name>
 
-
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
         <dependency>

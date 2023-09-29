@@ -1,57 +1,58 @@
 package com.project.app.service.instrument;
 
-import com.project.app.service.AbstractEntityBLTestCase;
 import com.project.app.entities.instrument.CreditInstrument;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Sign;
 import com.project.app.entities.transaction.Transaction;
+import com.project.app.service.AbstractServiceTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import static org.junit.Assert.assertEquals;
+
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * @author p.rafailov
  */
-public class InstrumentBLTestCase extends AbstractEntityBLTestCase {
+public class InstrumentServiceTest extends AbstractServiceTest {
 
-    private InstrumentBL ibl;
+    private InstrumentService instrumentService;
     private final static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     @Before
     public void setUp() {
-        ibl = new DefaultInstrumentBL();
+        instrumentService = new DefaultInstrumentService();
     }
 
     @After
     public void tearDown() {
-        ibl = null;
+        instrumentService = null;
     }
 
     @Test
     public void insertInstrumentTest() {
         Instrument entity = new CreditInstrument("creditEntity", LocalDateTime.now(), LocalDateTime.now(),
                 0, Frequency.ANNUALLY, Frequency.ANNUALLY);
-        ibl.insertInstrument(entity);
+        instrumentService.insertInstrument(entity);
         LOGGER.log(Level.INFO, "Assigned ID on inserted instrument: {0}", entity.getId());
         assertNotNull(entity.getId());
     }
 
     @Test
     public void getInstrumentTest() {
-        Instrument inst = ibl.getInstrument(getRandomId());
+        Instrument inst = instrumentService.getInstrument(getRandomId());
 
         LOGGER.log(Level.INFO, "Retreived instrument: {0}", inst);
         assertNotNull(inst);
@@ -62,15 +63,15 @@ public class InstrumentBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void removeInstrumentTest() {
         Long id = getRandomId();
-        Instrument in = ibl.getInstrument(id);
-        ibl.deleteInstrument(in);
+        Instrument in = instrumentService.getInstrument(id);
+        instrumentService.deleteInstrument(in);
         LOGGER.log(Level.INFO, "Deleted Instrument", in);
         assertNull(in.getId());
     }
 
     @Test
     public void getAllInstrumentsTestCase() {
-        List<Instrument> list = ibl.getAllInstruments();
+        List<Instrument> list = instrumentService.getAllInstruments();
         assertNotNull(list);
         assertEquals(list.size(), getAllIds().size());
     }
@@ -78,11 +79,11 @@ public class InstrumentBLTestCase extends AbstractEntityBLTestCase {
     @Test
     public void updateInstrumentTest() {
         Long id = getRandomId();
-        Instrument in = ibl.getInstrument(id);
+        Instrument in = instrumentService.getInstrument(id);
         String newName = "updatedName";
         in.setInstrumentName(newName);
-        ibl.updateInstrument(in);
-        Instrument upIn = ibl.getInstrument(id);
+        instrumentService.updateInstrument(in);
+        Instrument upIn = instrumentService.getInstrument(id);
         LOGGER.log(Level.INFO, "Updated instrument: {0}", upIn);
         assertEquals(in.getInstrumentName(), upIn.getInstrumentName());
     }
@@ -115,7 +116,7 @@ public class InstrumentBLTestCase extends AbstractEntityBLTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        return ibl.getAllInstruments().stream().map(ins -> ins.getId()).collect(Collectors.toList());
+        return instrumentService.getAllInstruments().stream().map(ins -> ins.getId()).collect(Collectors.toList());
     }
 
 }

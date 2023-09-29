@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author p.rafailov
  */
-public interface InstrumentBL {
+public interface InstrumentService {
 
     void insertInstrument(Instrument instrument);
 
