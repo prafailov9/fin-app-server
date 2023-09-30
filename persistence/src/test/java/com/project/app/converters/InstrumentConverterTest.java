@@ -1,21 +1,20 @@
 package com.project.app.converters;
 
-import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverter;
+import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.entities.instrument.CreditInstrument;
 import com.project.app.entities.instrument.DepositInstrument;
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.instrument.Share;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import com.project.app.entities.instrument.frequency.Frequency;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -45,10 +44,6 @@ public class InstrumentConverterTest {
         creditEntity = new CreditInstrument(1L, "creditEntity", LocalDateTime.MIN, LocalDateTime.MIN, 0, Frequency.ANNUALLY, Frequency.ANNUALLY);
         depositEntity = new DepositInstrument(3L, "depositEntity", LocalDateTime.MIN, LocalDateTime.MIN, 0, Frequency.ANNUALLY);
         shareEntity = new Share(Long.MIN_VALUE, "shareEntity", LocalDateTime.MIN, LocalDateTime.MIN);
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

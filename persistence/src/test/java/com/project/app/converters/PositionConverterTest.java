@@ -7,13 +7,14 @@ import com.project.app.entities.instrument.CreditInstrument;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class PositionConverterTest {
 
@@ -29,13 +30,6 @@ public class PositionConverterTest {
         posEntity = new Position(LocalDateTime.MIN, "dasda", "asdasd", ins, 0);
         posConv = new PositionConverter();
         posDto = new PositionDto(Timestamp.valueOf(LocalDateTime.MIN), "dasda", "asdasd", 0, 0, insDto);
-    }
-
-    @After
-    public void tearDown() {
-        posConv = null;
-        posEntity = null;
-        posDto = null;
     }
 
     @Test
