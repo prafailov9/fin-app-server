@@ -22,13 +22,14 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
 
     protected static final Logger log = LoggerFactory.getLogger(DefaultPositionDao.class);
 
+    private static final String TABLE_NAME = "positions";
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
     private final static String INSERT_WITH_FK_SQL = "INSERT INTO positions VALUES (%s)";
     private final InstrumentDao instrumentDao;
 
     public DefaultPositionDao() {
-        super("positions");
-        this.instrumentDao = (InstrumentDao) DaoInstanceHolder.get("instrument");
+        super(TABLE_NAME);
+        this.instrumentDao = DaoInstanceHolder.get(InstrumentDao.class);
     }
 
     @Override

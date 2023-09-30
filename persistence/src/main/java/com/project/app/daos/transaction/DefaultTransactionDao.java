@@ -20,14 +20,17 @@ import java.util.List;
 public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> implements TransactionDao {
 
     protected static final Logger log = LoggerFactory.getLogger(DefaultTransactionDao.class);
+
+    private static final String TABLE_NAME = "transactions";
+
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
     private final static String INSERT_WITH_FK_SQL = "INSERT INTO transactions VALUES (%s)";
 
     private final PositionDao positionDao;
 
     public DefaultTransactionDao() {
-        super("transactions");
-        this.positionDao = (PositionDao) DaoInstanceHolder.get("position");
+        super(TABLE_NAME);
+        this.positionDao = DaoInstanceHolder.get(PositionDao.class);
     }
 
     @Override

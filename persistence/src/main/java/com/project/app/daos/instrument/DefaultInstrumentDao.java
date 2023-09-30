@@ -16,10 +16,13 @@ import java.util.List;
 public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> implements InstrumentDao {
 
     protected static final Logger log = LoggerFactory.getLogger(DefaultInstrumentDao.class);
+
+    private static final String TABLE_NAME = "instruments";
+
     private static final String SELECT_ONE_BY_NAME_QUERY = "select * from instruments where name='?'";
 
     public DefaultInstrumentDao() {
-        super("instruments");
+        super(TABLE_NAME);
     }
 
     @Override

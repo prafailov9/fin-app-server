@@ -2,8 +2,11 @@ package com.project.app.factory;
 
 import com.project.app.coredb.GenericDao;
 import com.project.app.daos.instrument.DefaultInstrumentDao;
+import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.daos.position.DefaultPositionDao;
+import com.project.app.daos.position.PositionDao;
 import com.project.app.daos.transaction.DefaultTransactionDao;
+import com.project.app.daos.transaction.TransactionDao;
 import com.project.app.dtos.Entity;
 import com.project.app.exceptions.InvalidKeyException;
 
@@ -11,20 +14,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class DaoInstanceHolder {
 
-    private static final ConcurrentHashMap<String, GenericDao<? extends Entity>> DAO_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<? extends GenericDao<? extends Entity>>, GenericDao<? extends Entity>> DAO_CACHE = new ConcurrentHashMap<>();
 
     static {
-        DAO_CACHE.put("instrument", new DefaultInstrumentDao());
-        DAO_CACHE.put("position", new DefaultPositionDao());
-        DAO_CACHE.put("transaction", new DefaultTransactionDao());
+        DAO_CACHE.put(InstrumentDao.class, new DefaultInstrumentDao());
+        DAO_CACHE.put(PositionDao.class, new DefaultPositionDao());
+        DAO_CACHE.put(TransactionDao.class, new DefaultTransactionDao());
     }
 
-    public static GenericDao<? extends Entity> get(final String key) {
-        GenericDao<? extends Entity> dao = DAO_CACHE.get(key);
+    public static <T extends GenericDao<? extends Entity>> T get(final Class<T> daoType) {
+        GenericDao<? extends Entity> dao = DAO_CACHE.get(daoType);
         if (dao == null) {
-            throw new InvalidKeyException(key);
+            throw new InvalidKeyException(daoType.getName());
         }
-        return dao;
+        return daoType.cast(dao);
     }
-
 }
+
