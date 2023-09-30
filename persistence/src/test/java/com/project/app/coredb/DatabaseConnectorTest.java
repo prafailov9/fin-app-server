@@ -2,12 +2,12 @@ package com.project.app.coredb;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.junit.After;
+
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DatabaseConnectorTestCase {
+public class DatabaseConnectorTest {
 
     private static final String PROPERTIES_PATH = "/db-test.properties";
     @Before

@@ -2,6 +2,7 @@ package com.project.app.daos.instrument;
 
 import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.dtos.instrument.InstrumentDto;
+import com.project.app.exceptions.PrepareStatementFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,25 +62,22 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     }
 
     @Override
-    protected void runUpdateQuery(InstrumentDto entity) throws SQLException {
-        Connection conn = getConnection();
-
+    protected PreparedStatement prepareUpdate(InstrumentDto entity, Connection connection) throws PrepareStatementFailedException, SQLException {
         String query = "update " + tableName + " set id=?, instrument_name=?, interest_rate=?, "
                 + "start_payment_date=?, end_payment_date=?, interest_frequency=?, "
                 + "principal_frequency=?, instrument_type=? where id=" + entity.getId();
         log.info("Update query: {}", query);
 
-        PreparedStatement pst = conn.prepareStatement(query);
-        pst.setLong(1, entity.getId());
-        pst.setString(2, entity.getInstrumentName());
-        pst.setDouble(3, entity.getInterestRate());
-        pst.setTimestamp(4, entity.getPaymentStartingDate());
-        pst.setTimestamp(5, entity.getPaymentEndingDate());
-        pst.setString(6, entity.getInterestFrequency());
-        pst.setString(7, entity.getPrincipalFrequency());
-        pst.setString(8, entity.getIntrumentType());
-
-        pst.executeUpdate();
+        return initPreparedStatement(query, connection, pst -> {
+            pst.setLong(1, entity.getId());
+            pst.setString(2, entity.getInstrumentName());
+            pst.setDouble(3, entity.getInterestRate());
+            pst.setTimestamp(4, entity.getPaymentStartingDate());
+            pst.setTimestamp(5, entity.getPaymentEndingDate());
+            pst.setString(6, entity.getInterestFrequency());
+            pst.setString(7, entity.getPrincipalFrequency());
+            pst.setString(8, entity.getIntrumentType());
+        });
     }
 
     @Override
@@ -105,6 +103,7 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     protected boolean containsReference(InstrumentDto entity) {
         return false;
     }
+
 
     private InstrumentDto getResults(ResultSet rs) throws SQLException {
         InstrumentDto inst = new InstrumentDto();

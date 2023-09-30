@@ -46,8 +46,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         try {
             conn = getConnection();
             String query = String.format(LOAD_ONE_QUERY, tableName);
-            pst = initPreparedStatement(query, conn,
-                    preparedStatement -> preparedStatement.setLong(1, id));
+            pst = initPreparedStatement(query, conn, preparedStatement -> preparedStatement.setLong(1, id));
 
             rs = pst.executeQuery();
             entity = getDatabaseResults(rs);
@@ -93,8 +92,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             }
             conn = getConnection();
             String query = String.format(DELETE_QUERY, tableName);
-            pst = initPreparedStatement(query, conn,
-                    preparedStatement -> preparedStatement.setLong(1, entityId));
+            pst = initPreparedStatement(query, conn, preparedStatement -> preparedStatement.setLong(1, entityId));
             pst.executeUpdate();
             setEntityId(entity, null);
 
@@ -107,55 +105,35 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
 
     @Override
     public void update(final T entity) {
-        try {
-            if (entity.getId() == null) {
-                throw new NoSuchEntityException();
-            }
-            runUpdateQuery(entity);
-        } catch (SQLException ex) {
-            log.error("Could not update a record in {}", tableName, ex);
+        if (entity.getId() == null) {
+            throw new NoSuchEntityException();
         }
-    }
 
-    private T saveWithReference(T entity) {
-        String query = buildInsertQueryWithForeignKeys(entity);
-        return runSave(entity, query);
-    }
-
-    private T plainSave(T entity) {
-        String query = String.format(INSERT_QUERY, tableName, entity.toString());
-        return runSave(entity, query);
-    }
-
-    private void requireNotExists(T entity) {
-        Long id = entity.getId();
-        if (id != null) {
-            throw new EntityAlreadyExistsException(String.format("Entity from %s already exists whit id = %s", tableName, id));
-        }
-    }
-
-    private T runSave(T entity, String query) {
         Connection conn = null;
         PreparedStatement pst = null;
-        ResultSet keys = null;
         try {
             conn = getConnection();
-            log.info("Query: {}", query);
-            pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pst.executeUpdate();
-            keys = pst.getGeneratedKeys();
-            if (keys.next()) {
-                Long id = keys.getLong(1);
-                setEntityId(entity, id);
-            }
+            pst = prepareUpdate(entity, conn);
+            int affectedRows = pst.executeUpdate();
+            log.info("Affected rows after position Update: {}", affectedRows);
         } catch (SQLException ex) {
-            log.error("Could not create a record in {}", tableName, ex);
-            throw new SaveForEntityFailedException();
+            log.error("Could not update a record in {}", tableName, ex);
         } finally {
-            closeResources(keys, pst, conn);
+            closeResources(null, pst, conn);
         }
-        return entity;
     }
+
+    protected abstract void setEntityId(T entity, Long id);
+
+    protected abstract T getDatabaseResults(ResultSet rs) throws SQLException;
+
+    protected abstract List<T> getAllDatabaseResults(ResultSet rs) throws SQLException;
+
+    protected abstract boolean containsReference(T entity);
+
+    protected abstract PreparedStatement prepareUpdate(T entity, Connection connection) throws PrepareStatementFailedException, SQLException;
+
+    protected abstract String buildInsertQueryWithForeignKeys(T entity);
 
     protected Connection getConnection() {
         return DatabaseConnector.getInstance().getConnection();
@@ -211,16 +189,44 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         }
     }
 
-    protected abstract void setEntityId(T entity, Long id);
+    private T saveWithReference(T entity) {
+        String query = buildInsertQueryWithForeignKeys(entity);
+        return runSave(entity, query);
+    }
 
-    protected abstract T getDatabaseResults(ResultSet rs) throws SQLException;
+    private T plainSave(T entity) {
+        String query = String.format(INSERT_QUERY, tableName, entity.toString());
+        return runSave(entity, query);
+    }
 
-    protected abstract List<T> getAllDatabaseResults(ResultSet rs) throws SQLException;
+    private void requireNotExists(T entity) {
+        Long id = entity.getId();
+        if (id != null) {
+            throw new EntityAlreadyExistsException(String.format("Entity from %s already exists whit id = %s", tableName, id));
+        }
+    }
 
-    protected abstract boolean containsReference(T entity);
-
-    protected abstract void runUpdateQuery(T entity) throws SQLException;
-
-    protected abstract String buildInsertQueryWithForeignKeys(T entity);
+    private T runSave(T entity, String query) {
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet keys = null;
+        try {
+            conn = getConnection();
+            log.info("Query: {}", query);
+            pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pst.executeUpdate();
+            keys = pst.getGeneratedKeys();
+            if (keys.next()) {
+                Long id = keys.getLong(1);
+                setEntityId(entity, id);
+            }
+        } catch (SQLException ex) {
+            log.error("Could not create a record in {}", tableName, ex);
+            throw new SaveForEntityFailedException();
+        } finally {
+            closeResources(keys, pst, conn);
+        }
+        return entity;
+    }
 
 }

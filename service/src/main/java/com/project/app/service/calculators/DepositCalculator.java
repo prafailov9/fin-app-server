@@ -4,7 +4,6 @@ import com.project.app.entities.instrument.DepositInstrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
-import com.project.app.service.ServiceHelperUtils;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.dateadders.DateAdder;
 import com.project.app.service.dateadders.DateAdderInstanceHolder;
@@ -54,9 +53,7 @@ public class DepositCalculator implements Calculator<DepositResultObject> {
             interestPayments.put(currentDate, amount);
         }
 
-        String instrumentType = "deposit";
-
-        return new DepositResultObject(interestPayments, pos, instrumentType);
+        return new DepositResultObject(interestPayments, pos, dep.getType());
     }
 
     private void validateData(Position pos, DepositInstrument dep, List<Transaction> txs) {

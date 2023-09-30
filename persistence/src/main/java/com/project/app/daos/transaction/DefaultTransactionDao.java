@@ -1,10 +1,12 @@
 package com.project.app.daos.transaction;
 
 import com.project.app.coredb.AbstractGenericDao;
-import com.project.app.daos.position.DefaultPositionDao;
+import com.project.app.daos.position.PositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.dtos.transaction.TransactionDto;
+import com.project.app.exceptions.PrepareStatementFailedException;
 import com.project.app.exceptions.SaveForEntityFailedException;
+import com.project.app.factory.DaoInstanceHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,35 +16,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> implements TransactionDao {
 
     protected static final Logger log = LoggerFactory.getLogger(DefaultTransactionDao.class);
-
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
-
     private final static String INSERT_WITH_FK_SQL = "INSERT INTO transactions VALUES (%s)";
+
+    private final PositionDao positionDao;
 
     public DefaultTransactionDao() {
         super("transactions");
+        this.positionDao = (PositionDao) DaoInstanceHolder.get("position");
     }
 
     @Override
     public List<TransactionDto> loadAllByReference(Long fk) {
         List<TransactionDto> transactions = null;
+        PreparedStatement pst = null;
+        Connection conn = null;
+        ResultSet rs = null;
         try {
             String query = String.format(LOAD_ALL_BY_FK_QUERY, tableName, "fk_position");
-            PreparedStatement pst = getConnection().prepareStatement(query);
+            conn = getConnection();
+            pst = conn.prepareStatement(query);
             pst.setLong(1, fk);
-            ResultSet results = pst.executeQuery();
-            transactions = getAllDatabaseResults(results);
+            rs = pst.executeQuery();
+            transactions = getAllDatabaseResults(rs);
         } catch (SQLException ex) {
             log.error("Failed to load transactions for positionId: {}", fk, ex);
         } finally {
-            return transactions;
-
+            closeResources(rs, pst, conn);
         }
+        return transactions;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
         tx.setAmount(rs.getDouble("amount"));
         tx.setSign(rs.getInt("sign"));
         tx.setTransactionDate(rs.getTimestamp("transaction_date"));
-        PositionDto pos = new DefaultPositionDao().loadById(rs.getLong("fk_position"));
+        PositionDto pos = positionDao.loadById(rs.getLong("fk_position"));
         tx.setPosition(pos);
         return tx;
     }
@@ -72,28 +78,24 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
 
     @Override
     protected boolean containsReference(TransactionDto entity) {
-        if (Objects.isNull(entity.getPosition()) || Objects.isNull(entity.getPosition().getId())) {
+        if (entity.getPosition() == null || entity.getPosition().getId() == null) {
             throw new SaveForEntityFailedException();
-        } else {
-            return true;
         }
+        return true;
     }
 
     @Override
-    protected void runUpdateQuery(TransactionDto entity) throws SQLException {
-        Connection conn = getConnection();
+    protected PreparedStatement prepareUpdate(TransactionDto entity, Connection connection) throws PrepareStatementFailedException, SQLException {
         String sql = "update " + tableName + " set id=?, amount=?, sign=?, transaction_date=?, fk_position=? where id=" + entity.getId() + ";";
-
         log.info("Update query: {}", sql);
 
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setLong(1, entity.getId());
-        pst.setDouble(2, entity.getAmount());
-        pst.setInt(3, entity.getSign());
-        pst.setTimestamp(4, entity.getTransactionDate());
-        pst.setLong(5, entity.getPosition().getId());
-        pst.executeUpdate();
-
+        return initPreparedStatement(sql, connection, pst -> {
+            pst.setLong(1, entity.getId());
+            pst.setDouble(2, entity.getAmount());
+            pst.setInt(3, entity.getSign());
+            pst.setTimestamp(4, entity.getTransactionDate());
+            pst.setLong(5, entity.getPosition().getId());
+        });
     }
 
     @Override

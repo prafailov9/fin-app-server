@@ -44,8 +44,7 @@ public class DefaultTransactionService implements TransactionService {
     public Transaction getTransaction(Long id) {
         try {
             TransactionDto dto = transactionDao.loadById(id);
-            Transaction entity = transactionConverter.convertToEntity(dto);
-            return entity;
+            return transactionConverter.convertToEntity(dto);
         } catch (NoRecordFoundException | NullIdException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }
@@ -93,12 +92,11 @@ public class DefaultTransactionService implements TransactionService {
     @Override
     public List<Transaction> getAllTransactionsByPosition(Position position) {
         Long fk = position.getId();
-        List<Transaction> txs = transactionDao
+        return transactionDao
                 .loadAllByReference(fk)
                 .stream()
                 .map(transactionConverter::convertToEntity)
                 .collect(Collectors.toList());
-        return txs;
     }
 
 }

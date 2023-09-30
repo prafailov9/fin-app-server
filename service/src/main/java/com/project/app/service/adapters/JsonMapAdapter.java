@@ -15,13 +15,13 @@ public class JsonMapAdapter extends XmlAdapter<String, Map<LocalDateTime, Double
     private final JsonMapParser<LocalDateTime, Double> parser = new JsonMapParser<>();
 
     @Override
-    public Map<LocalDateTime, Double> unmarshal(String stringMap) throws Exception {
+    public Map<LocalDateTime, Double> unmarshal(String stringMap) {
         return parser.toMap(stringMap);
 
     }
 
     @Override
-    public String marshal(Map<LocalDateTime, Double> resultsMap) throws Exception {
+    public String marshal(Map<LocalDateTime, Double> resultsMap) {
         return parser.toJsonString(resultsMap);
     }
 

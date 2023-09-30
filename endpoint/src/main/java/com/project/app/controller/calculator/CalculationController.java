@@ -32,8 +32,7 @@ public class CalculationController {
     public ResultObject getDepositCalculationResults(@PathParam("posId") Long posId) {
         Position pos = positionService.getPosition(posId);
 
-        ResultObject dro = calculationService.getDepositCalculationResults(pos);
-        return dro;
+        return calculationService.getDepositCalculationResults(pos);
     }
 
     @GET

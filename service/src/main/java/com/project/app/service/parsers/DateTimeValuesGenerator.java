@@ -47,8 +47,7 @@ public class DateTimeValuesGenerator {
         seconds = addZero(seconds);
 
         String strDate = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
-        LocalDateTime date = LocalDateTime.parse(strDate, DTF);
-        return date;
+        return LocalDateTime.parse(strDate, DTF);
     }
 
     private String addZero(String str) {

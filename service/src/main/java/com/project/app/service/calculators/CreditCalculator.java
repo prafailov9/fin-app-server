@@ -4,10 +4,10 @@ import com.project.app.entities.instrument.CreditInstrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
+import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.dateadders.DateAdder;
 import com.project.app.service.dateadders.DateAdderInstanceHolder;
 import com.project.app.service.results.CreditResultObject;
-import com.project.app.service.transaction.DefaultTransactionService;
 import com.project.app.service.transaction.TransactionService;
 import com.project.app.service.validators.CreditInstrumentValidator;
 import com.project.app.service.validators.PositionValidator;
@@ -25,33 +25,30 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
     private double debt;
 
     public CreditCalculator() {
-        transactionService = new DefaultTransactionService();
+        transactionService = ServiceInstanceHolder.get(TransactionService.class);
     }
 
-    /*
-        Method to calculate the interest and principal payments on given position.
+    /**
+     * Method to calculate the interest and principal payments on given position.
+     * @param position
+     * @return
      */
     @Override
     public CreditResultObject calculateCashFlow(Position position) {
 
-        /*
-            retreiving the data for calculations
-         */
+        // retrieving the data for calculations
         CreditInstrument creditInstrument = (CreditInstrument) position.getInstrument();
         List<Transaction> transactions = transactionService.getAllTransactionsByPosition(position);
 
         validateData(position, creditInstrument, transactions);
 
-        /*
-            calculating principal and interest payments and storing results in sorted maps.
-         */
+        // calculating principal and interest payments and storing results in sorted maps.
         Map<LocalDateTime, Double> prPayments = calculatePrincipalPayments(creditInstrument, transactions);
-        Map<LocalDateTime, Double> intPayments = calculateInterestPayments(creditInstrument, transactions, prPayments);
+        Map<LocalDateTime, Double> intPayments = calculateInterestPayments(creditInstrument, prPayments);
         String instrumentType = "credit";
 
-        /*
-            Creating a Result object which contains the calculation results and other data;
-         */
+
+        // Creating a Result object which contains the calculation results and other data;
         return new CreditResultObject(intPayments, position, instrumentType, prPayments);
     }
 
@@ -64,13 +61,8 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
         return volume;
     }
 
-    private double calculatePrincipal(double volume, int numberOfPayments) {
-        return volume / numberOfPayments;
-    }
-
-    public Map<LocalDateTime, Double> calculateInterestPayments(CreditInstrument instrument, List<Transaction> transactions,
-            Map<LocalDateTime, Double> principalPayments) {
-
+    public Map<LocalDateTime, Double> calculateInterestPayments(CreditInstrument instrument,
+                                                                Map<LocalDateTime, Double> principalPayments) {
         LocalDateTime startDate = instrument.getStartOfPaymentPeriod();
         double interestRate = instrument.getInterestRate();
         Frequency interestFrequency = instrument.getInterestFrequency();
@@ -118,7 +110,6 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
     }
 
     private void validateData(Position pos, CreditInstrument ins, List<Transaction> txs) {
-
         PositionValidator posVal = new PositionValidator(pos);
         CreditInstrumentValidator instVal = new CreditInstrumentValidator(ins);
         TransactionValidator txVal = new TransactionValidator(txs.get(0));
@@ -140,6 +131,10 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
             counter++;
         }
         return counter;
+    }
+
+    private double calculatePrincipal(double volume, int numberOfPayments) {
+        return volume / numberOfPayments;
     }
 
 }
