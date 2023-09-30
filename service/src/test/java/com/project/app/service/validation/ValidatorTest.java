@@ -15,7 +15,7 @@ import org.junit.Test;
  *
  * @author prafailov
  */
-public class ValidatorTestCase {
+public class ValidatorTest {
 
     private GenericValidator<Position> positionValidator;
 

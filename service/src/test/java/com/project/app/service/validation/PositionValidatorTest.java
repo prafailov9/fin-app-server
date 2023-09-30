@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @author prafailov
  */
-public class PositionValidatorTestCase {
+public class PositionValidatorTest {
 
     private PositionValidator posVal;
     private Position pos;

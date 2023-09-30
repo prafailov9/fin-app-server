@@ -16,7 +16,7 @@ import org.junit.Test;
  *
  * @author prafailov
  */
-public class TransactionValidatorTestCase {
+public class TransactionValidatorTest {
 
     private Transaction tx;
 

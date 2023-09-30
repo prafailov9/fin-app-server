@@ -2,13 +2,15 @@ package com.project.app.service.position;
 
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.position.Position;
+import com.project.app.service.Service;
+
 import java.util.List;
 
 /**
  *
  * @author p.rafailov
  */
-public interface PositionService {
+public interface PositionService extends Service {
 
     void insertPosition(Position position);
 

@@ -1,41 +1,43 @@
-package com.project.app.services.calculator;
+package com.project.app.controller.calculator;
 
-import com.project.app.businesslogic.instrument.DefaultInstrumentBL;
-import com.project.app.businesslogic.instrument.InstrumentBL;
-import com.project.app.businesslogic.position.DefaultPositionBL;
-import com.project.app.businesslogic.position.PositionBL;
-import com.project.app.businesslogic.results.ResultObject;
+import com.project.app.controller.AbstractResourceTest;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.position.Position;
-import com.project.app.services.AbstractResourceTestCase;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.project.app.service.ServiceHelperUtils;
+import com.project.app.service.ServiceInstanceHolder;
+import com.project.app.service.instrument.InstrumentService;
+import com.project.app.service.position.PositionService;
+import com.project.app.service.results.ResultObject;
 import jakarta.ws.rs.client.Invocation;
 import org.junit.After;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
  * @author prafailov
  */
-public class CalculatorResourceTestCase extends AbstractResourceTestCase {
+public class CalculatorResourceTest extends AbstractResourceTest {
 
     private final static String CALCULATOR_RA_PATH = "calculator";
-    private PositionBL pbl;
-    private InstrumentBL ibl;
+    private PositionService positionService;
+    private InstrumentService instrumentService;
 
     @Before
     public void setUp() {
-        pbl = new DefaultPositionBL();
-        ibl = new DefaultInstrumentBL();
+        positionService = ServiceInstanceHolder.get(ServiceHelperUtils.POSITION_SERVICE_NAME);
+        instrumentService = ServiceInstanceHolder.get(ServiceHelperUtils.INSTRUMENT_SERVICE_NAME);
     }
 
     @After
     public void tearDown() {
-        pbl = null;
-        ibl = null;
+        positionService = null;
+        instrumentService = null;
     }
 
     @Test
@@ -61,7 +63,7 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
 
     @Override
     protected List<Long> getAllIds() {
-        return pbl.getAllPositions().stream().map(Position::getId).collect(Collectors.toList());
+        return positionService.getAllPositions().stream().map(Position::getId).collect(Collectors.toList());
     }
 
     // Not finished
@@ -72,8 +74,8 @@ public class CalculatorResourceTestCase extends AbstractResourceTestCase {
 
     // Not finished
     private List<Long> getAllIdsByInstrumentType(String type) {
-        List<Instrument> instruments = ibl.getAllInstrumentsByType(type);
-        return pbl
+        List<Instrument> instruments = instrumentService.getAllInstrumentsByType(type);
+        return positionService
                 .getAllPositionsByInstrument(instruments.get(getGenerator().nextInt(0, instruments.size())))
                 .stream()
                 .map(Position::getId)

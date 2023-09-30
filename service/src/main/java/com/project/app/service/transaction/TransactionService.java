@@ -2,13 +2,15 @@ package com.project.app.service.transaction;
 
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
+import com.project.app.service.Service;
+
 import java.util.List;
 
 /**
  *
  * @author p.rafailov
  */
-public interface TransactionService {
+public interface TransactionService extends Service {
 
     void insertTransaction(Transaction transaction);
 
