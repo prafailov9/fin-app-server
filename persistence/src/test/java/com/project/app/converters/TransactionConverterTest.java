@@ -17,11 +17,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TransactionConverterTestCase {
+public class TransactionConverterTest {
 
     private TransactionConverter tc;
-    private Instrument ins;
-    private InstrumentDto insDto;
     private Position pos;
     private PositionDto posDto;
     private Transaction tx;
@@ -34,8 +32,8 @@ public class TransactionConverterTestCase {
         LocalDateTime startDate = LocalDateTime.parse("12/12/2012 12:12:12", dtf);
         LocalDateTime endDate = LocalDateTime.parse("12/12/2022 12:12:12", dtf);
 
-        ins = new Share("shareInst", startDate, endDate);
-        insDto = new InstrumentDto("shareinst", 0, Timestamp.valueOf(startDate), Timestamp.valueOf(endDate),
+        Instrument ins = new Share("shareInst", startDate, endDate);
+        InstrumentDto insDto = new InstrumentDto("shareinst", 0, Timestamp.valueOf(startDate), Timestamp.valueOf(endDate),
                 null, null, "share");
         pos = new Position(startDate, "sp", "sr", ins, 100);
         tx = new Transaction(Long.MIN_VALUE, startDate, 0, Sign.POSITIVE, pos);
