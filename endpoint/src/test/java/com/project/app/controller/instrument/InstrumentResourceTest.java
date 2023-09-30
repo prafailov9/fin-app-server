@@ -2,7 +2,6 @@ package com.project.app.controller.instrument;
 
 import com.project.app.controller.AbstractResourceTest;
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.service.ServiceHelperUtils;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.instrument.InstrumentService;
 import jakarta.ws.rs.client.Entity;

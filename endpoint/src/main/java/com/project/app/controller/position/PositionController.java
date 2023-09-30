@@ -1,7 +1,6 @@
 package com.project.app.controller.position;
 
 import com.project.app.entities.position.Position;
-import com.project.app.service.ServiceHelperUtils;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.position.PositionService;
 import jakarta.ws.rs.*;
