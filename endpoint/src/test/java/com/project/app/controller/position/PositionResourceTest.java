@@ -1,12 +1,7 @@
 package com.project.app.controller.position;
 
-import com.project.app.entities.position.Position;
 import com.project.app.controller.AbstractResourceTest;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-
-import com.project.app.service.ServiceHelperUtils;
+import com.project.app.entities.position.Position;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.position.PositionService;
 import jakarta.ws.rs.client.Entity;
@@ -15,11 +10,14 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -33,7 +31,7 @@ public class PositionResourceTest extends AbstractResourceTest {
 
     @Before
     public void setUp() {
-        positionService = ServiceInstanceHolder.get(ServiceHelperUtils.POSITION_SERVICE_NAME);
+        positionService = ServiceInstanceHolder.get(PositionService.class);
     }
 
     @After

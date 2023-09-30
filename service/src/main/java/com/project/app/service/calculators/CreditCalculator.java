@@ -1,17 +1,17 @@
 package com.project.app.service.calculators;
 
+import com.project.app.entities.instrument.CreditInstrument;
+import com.project.app.entities.instrument.frequency.Frequency;
+import com.project.app.entities.position.Position;
+import com.project.app.entities.transaction.Transaction;
 import com.project.app.service.dateadders.DateAdder;
-import com.project.app.service.dateadders.DateAdderFactory;
+import com.project.app.service.dateadders.DateAdderInstanceHolder;
 import com.project.app.service.results.CreditResultObject;
 import com.project.app.service.transaction.DefaultTransactionService;
 import com.project.app.service.transaction.TransactionService;
 import com.project.app.service.validators.CreditInstrumentValidator;
 import com.project.app.service.validators.PositionValidator;
 import com.project.app.service.validators.TransactionValidator;
-import com.project.app.entities.instrument.CreditInstrument;
-import com.project.app.entities.instrument.frequency.Frequency;
-import com.project.app.entities.position.Position;
-import com.project.app.entities.transaction.Transaction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,13 +21,11 @@ import java.util.TreeMap;
 
 public class CreditCalculator implements Calculator<CreditResultObject> {
 
-    private final DateAdderFactory factory;
-    private final TransactionService tbl;
+    private final TransactionService transactionService;
     private double debt;
 
     public CreditCalculator() {
-        factory = new DateAdderFactory();
-        tbl = new DefaultTransactionService();
+        transactionService = new DefaultTransactionService();
     }
 
     /*
@@ -40,7 +38,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
             retreiving the data for calculations
          */
         CreditInstrument creditInstrument = (CreditInstrument) position.getInstrument();
-        List<Transaction> transactions = tbl.getAllTransactionsByPosition(position);
+        List<Transaction> transactions = transactionService.getAllTransactionsByPosition(position);
 
         validateData(position, creditInstrument, transactions);
 
@@ -78,7 +76,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
         Frequency interestFrequency = instrument.getInterestFrequency();
         int timeAmount = interestFrequency.getOrdinal();
 
-        DateAdder adder = factory.getDateAdder(interestFrequency);
+        DateAdder adder = DateAdderInstanceHolder.getDateAdder(interestFrequency);
         LocalDateTime currentDate = startDate;
 
         Map<LocalDateTime, Double> interestPayments = new TreeMap<>();
@@ -108,7 +106,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
         int timeAmount = principalFrequency.getOrdinal();
         double amount = volume;
         LocalDateTime currentDate = startDate;
-        DateAdder adder = factory.getDateAdder(principalFrequency);
+        DateAdder adder = DateAdderInstanceHolder.getDateAdder(principalFrequency);
         Map<LocalDateTime, Double> principalPayments = new TreeMap<>();
 
         while (amount > 0) {
@@ -134,7 +132,7 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
     private int calculateNumberOfPrincipalPayments(LocalDateTime startDate, LocalDateTime endDate, Frequency principalFrequency) {
 
         int timeAmount = principalFrequency.getOrdinal();
-        DateAdder adder = factory.getDateAdder(principalFrequency);
+        DateAdder adder = DateAdderInstanceHolder.getDateAdder(principalFrequency);
         LocalDateTime currentDate = startDate;
         int counter = 0;
         while (currentDate.isBefore(endDate)) {

@@ -19,6 +19,10 @@ public final class DaoInstanceHolder {
         DAO_CACHE.put("transaction", new DefaultTransactionDao());
     }
 
+    private DaoInstanceHolder() {
+
+    }
+
     public static GenericDao<? extends Entity> get(final String key) {
         GenericDao<? extends Entity> dao = DAO_CACHE.get(key);
         if (dao == null) {

@@ -1,7 +1,6 @@
 package com.project.app.controller.transaction;
 
 import com.project.app.entities.transaction.Transaction;
-import com.project.app.service.ServiceHelperUtils;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.transaction.TransactionService;
 import jakarta.ws.rs.*;
@@ -21,7 +20,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     public TransactionController() {
-        this.transactionService = ServiceInstanceHolder.get(ServiceHelperUtils.TRANSACTION_SERVICE_NAME);
+        this.transactionService = ServiceInstanceHolder.get(TransactionService.class);
     }
 
     @GET

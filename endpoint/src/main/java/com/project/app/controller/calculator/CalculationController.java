@@ -23,8 +23,8 @@ public class CalculationController {
     private final CalculationService calculationService;
 
     public CalculationController() {
-        positionService = ServiceInstanceHolder.get(ServiceHelperUtils.POSITION_SERVICE_NAME);
-        calculationService = ServiceInstanceHolder.get(ServiceHelperUtils.CALCULATION_SERVICE_NAME);
+        positionService = ServiceInstanceHolder.get(PositionService.class);
+        calculationService = ServiceInstanceHolder.get(CalculationService.class);
     }
 
     @GET

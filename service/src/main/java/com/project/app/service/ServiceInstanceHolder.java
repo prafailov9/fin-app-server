@@ -1,9 +1,13 @@
 package com.project.app.service;
 
+import com.project.app.service.calculators.CalculationService;
 import com.project.app.service.calculators.DefaultCalculationService;
 import com.project.app.service.instrument.DefaultInstrumentService;
+import com.project.app.service.instrument.InstrumentService;
 import com.project.app.service.position.DefaultPositionService;
+import com.project.app.service.position.PositionService;
 import com.project.app.service.transaction.DefaultTransactionService;
+import com.project.app.service.transaction.TransactionService;
 
 import java.util.Map;
 
@@ -15,19 +19,23 @@ final public class ServiceInstanceHolder {
 
     static {
         SERVICE_MAP = Map.of(
-                CALCULATION_SERVICE_NAME, new DefaultCalculationService(),
-                INSTRUMENT_SERVICE_NAME, new DefaultInstrumentService(),
-                POSITION_SERVICE_NAME, new DefaultPositionService(),
-                TRANSACTION_SERVICE_NAME, new DefaultTransactionService());
+                CalculationService.class.getName(), new DefaultCalculationService(),
+                InstrumentService.class.getName(), new DefaultInstrumentService(),
+                PositionService.class.getName(), new DefaultPositionService(),
+                TransactionService.class.getName(), new DefaultTransactionService());
     }
 
-    public static <T extends Service> T get(final String key) {
-        Service service = SERVICE_MAP.get(key);
+    private ServiceInstanceHolder() {
+
+    }
+
+    public static <T extends Service> T get(final Class<T> type) {
+        Service service = SERVICE_MAP.get(type.getName());
         if (service == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("Service doesn't exist for type: " + type.getName());
         }
-
-        return (T) service;
+        return type.cast(service);
     }
+
 
 }

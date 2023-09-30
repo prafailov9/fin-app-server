@@ -32,7 +32,7 @@ public class InstrumentResourceTest extends AbstractResourceTest {
 
     @Before
     public void setUp() {
-        instrumentService = ServiceInstanceHolder.get(ServiceHelperUtils.INSTRUMENT_SERVICE_NAME);
+        instrumentService = ServiceInstanceHolder.get(InstrumentService.class);
     }
 
     @After

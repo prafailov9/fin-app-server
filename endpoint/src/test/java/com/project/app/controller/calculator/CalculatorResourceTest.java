@@ -30,8 +30,8 @@ public class CalculatorResourceTest extends AbstractResourceTest {
 
     @Before
     public void setUp() {
-        positionService = ServiceInstanceHolder.get(ServiceHelperUtils.POSITION_SERVICE_NAME);
-        instrumentService = ServiceInstanceHolder.get(ServiceHelperUtils.INSTRUMENT_SERVICE_NAME);
+        positionService = ServiceInstanceHolder.get(PositionService.class);
+        instrumentService = ServiceInstanceHolder.get(InstrumentService.class);
     }
 
     @After

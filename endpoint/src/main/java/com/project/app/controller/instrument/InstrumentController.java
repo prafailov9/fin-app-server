@@ -1,7 +1,6 @@
 package com.project.app.controller.instrument;
 
 import com.project.app.entities.instrument.Instrument;
-import com.project.app.service.ServiceHelperUtils;
 import com.project.app.service.ServiceInstanceHolder;
 import com.project.app.service.instrument.InstrumentService;
 import jakarta.ws.rs.*;
@@ -21,7 +20,7 @@ public class InstrumentController {
     private final InstrumentService instrumentService;
 
     public InstrumentController() {
-        this.instrumentService = ServiceInstanceHolder.get(ServiceHelperUtils.INSTRUMENT_SERVICE_NAME);
+        this.instrumentService = ServiceInstanceHolder.get(InstrumentService.class);
     }
 
     @GET

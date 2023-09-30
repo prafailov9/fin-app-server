@@ -21,7 +21,7 @@ public class PositionController {
     private final PositionService positionService;
 
     public PositionController() {
-        this.positionService = ServiceInstanceHolder.get(ServiceHelperUtils.POSITION_SERVICE_NAME);
+        this.positionService = ServiceInstanceHolder.get(PositionService.class);
     }
 
     @GET

@@ -1,17 +1,18 @@
 package com.project.app.service.calculators;
 
-import com.project.app.service.dateadders.DateAdder;
-import com.project.app.service.dateadders.DateAdderFactory;
-import com.project.app.service.results.DepositResultObject;
-import com.project.app.service.transaction.DefaultTransactionService;
-import com.project.app.service.transaction.TransactionService;
-import com.project.app.service.validators.DepositInstrumentValidator;
-import com.project.app.service.validators.PositionValidator;
-import com.project.app.service.validators.TransactionValidator;
 import com.project.app.entities.instrument.DepositInstrument;
 import com.project.app.entities.instrument.frequency.Frequency;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
+import com.project.app.service.ServiceHelperUtils;
+import com.project.app.service.ServiceInstanceHolder;
+import com.project.app.service.dateadders.DateAdder;
+import com.project.app.service.dateadders.DateAdderInstanceHolder;
+import com.project.app.service.results.DepositResultObject;
+import com.project.app.service.transaction.TransactionService;
+import com.project.app.service.validators.DepositInstrumentValidator;
+import com.project.app.service.validators.PositionValidator;
+import com.project.app.service.validators.TransactionValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,19 +21,16 @@ import java.util.TreeMap;
 
 public class DepositCalculator implements Calculator<DepositResultObject> {
 
-    private DateAdder dateAdder;
-    private final DateAdderFactory factory;
-    private final TransactionService tbl;
+    private final TransactionService transactionService;
 
     public DepositCalculator() {
-        factory = new DateAdderFactory();
-        tbl = new DefaultTransactionService();
+        transactionService = ServiceInstanceHolder.get(TransactionService.class);
     }
 
     @Override
     public DepositResultObject calculateCashFlow(Position pos) {
         DepositInstrument dep = (DepositInstrument) pos.getInstrument();
-        List<Transaction> txs = tbl.getAllTransactionsByPosition(pos);
+        List<Transaction> txs = transactionService.getAllTransactionsByPosition(pos);
 
         validateData(pos, dep, txs);
 
@@ -46,7 +44,7 @@ public class DepositCalculator implements Calculator<DepositResultObject> {
 
         double amount = positionVolume;
         LocalDateTime currentDate = startDate;
-        dateAdder = factory.getDateAdder(interestFrequency);
+        DateAdder dateAdder = DateAdderInstanceHolder.getDateAdder(interestFrequency);
         Map<LocalDateTime, Double> interestPayments = new TreeMap<>();
 
         while (currentDate.isBefore(endDate)) {
@@ -57,9 +55,8 @@ public class DepositCalculator implements Calculator<DepositResultObject> {
         }
 
         String instrumentType = "deposit";
-        DepositResultObject dro = new DepositResultObject(interestPayments, pos, instrumentType);
 
-        return dro;
+        return new DepositResultObject(interestPayments, pos, instrumentType);
     }
 
     private void validateData(Position pos, DepositInstrument dep, List<Transaction> txs) {

@@ -33,7 +33,7 @@ public class TransactionResourceTest extends AbstractResourceTest {
 
     @Before
     public void setUp() {
-        transactionService = ServiceInstanceHolder.get(ServiceHelperUtils.TRANSACTION_SERVICE_NAME);;
+        transactionService = ServiceInstanceHolder.get(TransactionService.class);
     }
 
     @After
