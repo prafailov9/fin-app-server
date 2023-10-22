@@ -1,13 +1,13 @@
 package com.project.app.service.instrument;
 
-import com.project.app.service.exceptions.EntityValidationException;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverter;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory;
-import com.project.app.daos.instrument.DefaultInstrumentDao;
 import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.exceptions.*;
+import com.project.app.factory.DaoInstanceHolder;
+import com.project.app.service.exceptions.EntityValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class DefaultInstrumentService implements InstrumentService {
     private final InstrumentConverterFactory converterFactory;
 
     public DefaultInstrumentService() {
-        this.instrumentDao = new DefaultInstrumentDao();
+        this.instrumentDao = DaoInstanceHolder.get(InstrumentDao.class);
         this.converterFactory = new InstrumentConverterFactory();
     }
 

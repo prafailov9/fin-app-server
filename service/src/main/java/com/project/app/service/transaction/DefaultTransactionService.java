@@ -1,12 +1,12 @@
 package com.project.app.service.transaction;
 
 import com.project.app.converters.entityconverters.TransactionConverter;
-import com.project.app.daos.transaction.DefaultTransactionDao;
 import com.project.app.daos.transaction.TransactionDao;
 import com.project.app.dtos.transaction.TransactionDto;
 import com.project.app.entities.position.Position;
 import com.project.app.entities.transaction.Transaction;
 import com.project.app.exceptions.*;
+import com.project.app.factory.DaoInstanceHolder;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ public class DefaultTransactionService implements TransactionService {
     private final TransactionDao transactionDao;
 
     public DefaultTransactionService() {
-        this.transactionDao = new DefaultTransactionDao();
+        this.transactionDao = DaoInstanceHolder.get(TransactionDao.class);
         this.transactionConverter = new TransactionConverter();
     }
 

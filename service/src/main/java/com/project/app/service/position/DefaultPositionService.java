@@ -1,12 +1,12 @@
 package com.project.app.service.position;
 
 import com.project.app.converters.entityconverters.PositionConverter;
-import com.project.app.daos.position.DefaultPositionDao;
 import com.project.app.daos.position.PositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.position.Position;
 import com.project.app.exceptions.*;
+import com.project.app.factory.DaoInstanceHolder;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ public class DefaultPositionService implements PositionService {
     private final PositionConverter positionConverter;
 
     public DefaultPositionService() {
-        this.positionDao = new DefaultPositionDao();
+        this.positionDao = DaoInstanceHolder.get(PositionDao.class);
         this.positionConverter = new PositionConverter();
     }
 
