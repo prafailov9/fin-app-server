@@ -2,6 +2,7 @@ package com.project.app.coredb;
 
 import com.project.app.exceptions.CannotLoadPropertiesException;
 import com.project.app.exceptions.ConnectorNotInitException;
+import com.project.app.exceptions.DatabaseConnectionException;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
@@ -49,12 +50,14 @@ public class DatabaseConnector {
     }
 
     public Connection getConnection() {
+        Connection connection;
         try {
-            return dataSource.getConnection();
+            connection = dataSource.getConnection();
         } catch (SQLException e) {
             LOGGER.severe("Could not retrieve connection!");
+            throw DatabaseConnectionException.withFailedToRetrieveFromDatasource(e.getCause());
         }
-        return null;
+        return connection;
     }
 
     private Properties loadProperties(String propertiesFile) {
@@ -83,6 +86,5 @@ public class DatabaseConnector {
 
         return ds;
     }
-
 
 }
