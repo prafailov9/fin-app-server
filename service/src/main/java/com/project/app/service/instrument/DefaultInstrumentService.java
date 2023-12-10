@@ -102,7 +102,10 @@ public class DefaultInstrumentService implements InstrumentService {
     @Override
     public List<Instrument> getAllInstrumentsByType(String type) {
         instrumentConverter = converterFactory.getConverter(type);
-        List<Instrument> instruments = instrumentDao.loadAllByType(type).stream().map(instrumentConverter::convertToEntity).collect(Collectors.toList());
+        List<Instrument> instruments = instrumentDao.loadAllByType(type)
+                .stream()
+                .map(instrumentConverter::convertToEntity)
+                .collect(Collectors.toList());
         return instruments;
     }
 

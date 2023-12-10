@@ -32,9 +32,8 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
         requireNotExists(entity);
         if (containsReference(entity)) {
             return saveWithReference(entity);
-        } else {
-            return plainSave(entity);
         }
+        return plainSave(entity);
     }
 
     @Override
