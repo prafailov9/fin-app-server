@@ -2,32 +2,20 @@ package com.project.app.converters.entityconverters.instrumentconverters;
 
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.entities.instrument.CreditInstrument;
+import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.instrument.frequency.Frequency;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- *
  * @author p.rafailov
  */
-public class CreditInstrumentConverter extends InstrumentConverter<CreditInstrument> {
+public class CreditInstrumentConverter implements InstrumentConverter {
 
     @Override
-    public InstrumentDto convertToDto(CreditInstrument entity) {
-        Timestamp stDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getStartOfPaymentPeriod());
-        Timestamp endDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getEndOfPaymentPeriod());
-
-        InstrumentDto dto = new InstrumentDto();
-
-        dto.setId(entity.getId());
-        dto.setInstrumentName(entity.getInstrumentName());
-        dto.setInterestRate(entity.getInterestRate());
-        dto.setInstrumentType("credit");
-        dto.setPrincipalFrequency(entity.getPrincipalFrequency().toString());
-        dto.setInterestFrequency(entity.getInterestFrequency().toString());
-        dto.setPaymentStartingDate(stDate);
-        dto.setPaymentEndingDate(endDate);
-        return dto;
+    public InstrumentDto convertToDto(Instrument entity) {
+        return convert((CreditInstrument) entity);
     }
 
     @Override
@@ -45,6 +33,23 @@ public class CreditInstrumentConverter extends InstrumentConverter<CreditInstrum
         inst.setPrincipalFrequency(Frequency.valueOf(dto.getPrincipalFrequency()));
 
         return inst;
+    }
+
+    private InstrumentDto convert(CreditInstrument entity) {
+        Timestamp stDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getStartOfPaymentPeriod());
+        Timestamp endDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getEndOfPaymentPeriod());
+
+        InstrumentDto dto = new InstrumentDto();
+
+        dto.setId(entity.getId());
+        dto.setInstrumentName(entity.getInstrumentName());
+        dto.setInterestRate(entity.getInterestRate());
+        dto.setInstrumentType("credit");
+        dto.setPrincipalFrequency(entity.getPrincipalFrequency().toString());
+        dto.setInterestFrequency(entity.getInterestFrequency().toString());
+        dto.setPaymentStartingDate(stDate);
+        dto.setPaymentEndingDate(endDate);
+        return dto;
     }
 
 }

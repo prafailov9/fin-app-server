@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class InstrumentConverterTest {
 
-    private InstrumentConverter<Instrument> conv;
+    private InstrumentConverter conv;
     private InstrumentConverterFactory factory;
 
     private InstrumentDto creditDto;

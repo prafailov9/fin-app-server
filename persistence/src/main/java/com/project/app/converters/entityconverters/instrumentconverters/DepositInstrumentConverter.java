@@ -2,31 +2,20 @@ package com.project.app.converters.entityconverters.instrumentconverters;
 
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.entities.instrument.DepositInstrument;
+import com.project.app.entities.instrument.Instrument;
 import com.project.app.entities.instrument.frequency.Frequency;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- *
  * @author p.rafailov
  */
-public class DepositInstrumentConverter extends InstrumentConverter<DepositInstrument> {
+public class DepositInstrumentConverter implements InstrumentConverter {
 
     @Override
-    public InstrumentDto convertToDto(DepositInstrument entity) {
-        Timestamp stDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getStartOfPaymentPeriod());
-        Timestamp endDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getEndOfPaymentPeriod());
-
-        InstrumentDto dto = new InstrumentDto();
-        dto.setId(entity.getId());
-        dto.setInstrumentName(entity.getInstrumentName());
-        dto.setInterestRate(entity.getInterestRate());
-        dto.setInterestFrequency(entity.getInterestFrequency().toString());
-        dto.setPaymentEndingDate(endDate);
-        dto.setPaymentStartingDate(stDate);
-        dto.setInstrumentType("deposit");
-
-        return dto;
+    public InstrumentDto convertToDto(Instrument entity) {
+        return convert((DepositInstrument) entity);
     }
 
     @Override
@@ -43,6 +32,22 @@ public class DepositInstrumentConverter extends InstrumentConverter<DepositInstr
         inst.setStartOfPaymentPeriod(stDate);
 
         return inst;
+    }
+
+    private InstrumentDto convert(DepositInstrument entity) {
+        Timestamp stDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getStartOfPaymentPeriod());
+        Timestamp endDate = getDateTimePersistenceConverter().convertToDatabaseColumn(entity.getEndOfPaymentPeriod());
+
+        InstrumentDto dto = new InstrumentDto();
+        dto.setId(entity.getId());
+        dto.setInstrumentName(entity.getInstrumentName());
+        dto.setInterestRate(entity.getInterestRate());
+        dto.setInterestFrequency(entity.getInterestFrequency().toString());
+        dto.setPaymentEndingDate(endDate);
+        dto.setPaymentStartingDate(stDate);
+        dto.setInstrumentType("deposit");
+
+        return dto;
     }
 
 }

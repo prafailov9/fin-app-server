@@ -4,34 +4,32 @@ import com.project.app.converters.entityconverters.instrumentconverters.CreditIn
 import com.project.app.converters.entityconverters.instrumentconverters.DepositInstrumentConverter;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverter;
 import com.project.app.converters.entityconverters.instrumentconverters.ShareConverter;
+import com.project.app.entities.instrument.Instrument;
 import com.project.app.exceptions.EntityConverterNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
- *
  * @author p.rafailov
  */
 public class InstrumentConverterFactory {
 
-    private static final Map<String, InstrumentConverter> CONVERTER_MAP = createConverterMap();
+    private static final Map<String, InstrumentConverter> CONVERTER_MAP;
 
-    private static Map<String, InstrumentConverter> createConverterMap() {
-        Map<String, InstrumentConverter> map = new HashMap<>();
-        map.put("credit", new CreditInstrumentConverter());
-        map.put("deposit", new DepositInstrumentConverter());
-        map.put("share", new ShareConverter());
-        return map;
+    static {
+        CONVERTER_MAP = Map.of("credit", new CreditInstrumentConverter(),
+                "deposit", new DepositInstrumentConverter(),
+                "share", new ShareConverter()
+        );
     }
 
-    public InstrumentConverter getConverter(final String key) throws EntityConverterNotFoundException {
-        try {
-            InstrumentConverter converter = Objects.requireNonNull(CONVERTER_MAP.get(key));
-            return converter;
-        } catch (NullPointerException ex) {
+
+    public static InstrumentConverter getConverter(final String key) throws EntityConverterNotFoundException {
+        InstrumentConverter converter = CONVERTER_MAP.get(key);
+        if (converter == null) {
             throw new EntityConverterNotFoundException(key);
         }
+        return converter;
     }
 
 }

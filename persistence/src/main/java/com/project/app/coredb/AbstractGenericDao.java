@@ -70,7 +70,6 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             String query = String.format(LOAD_ALL_QUERY, tableName);
             pst = initPreparedStatement(query, conn, null);
             rs = pst.executeQuery();
-
             return getAllDatabaseResults(rs);
         } catch (SQLException ex) {
             log.error("Could not load all records from {}", tableName, ex);

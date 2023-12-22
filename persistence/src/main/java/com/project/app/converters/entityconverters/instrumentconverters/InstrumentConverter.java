@@ -2,19 +2,20 @@ package com.project.app.converters.entityconverters.instrumentconverters;
 
 import com.project.app.converters.entityconverters.EntityConverter;
 import com.project.app.dtos.instrument.InstrumentDto;
+import com.project.app.entities.instrument.Instrument;
+
+import java.sql.Timestamp;
 
 /**
  *
  * @author p.rafailov
- * @param <E>
- * @param <D>
  */
-public abstract class InstrumentConverter<E> implements EntityConverter<E, InstrumentDto> {
+public interface InstrumentConverter extends EntityConverter<Instrument, InstrumentDto> {
 
     @Override
-    public abstract E convertToEntity(InstrumentDto dto);
+    Instrument convertToEntity(InstrumentDto dto);
 
     @Override
-    public abstract InstrumentDto convertToDto(E entity);
+    InstrumentDto convertToDto(Instrument entity);
 
 }

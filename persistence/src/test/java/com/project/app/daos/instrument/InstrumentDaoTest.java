@@ -53,8 +53,8 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
     @Test
     public void convertAndSaveTest() {
         Instrument entity = new Share(null, "shareInst", LocalDateTime.now(), LocalDateTime.now());
-        InstrumentConverter<Instrument> conv
-                = new InstrumentConverterFactory().getConverter(entity.getType());
+        InstrumentConverter conv
+                = InstrumentConverterFactory.getConverter(entity.getType());
         InstrumentDto dto = conv.convertToDto(entity);
         insDao.save(dto);
         assertNotNull(dto.getId());
