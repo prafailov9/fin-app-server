@@ -3,6 +3,7 @@ package com.project.app.service.dateadders;
 import com.project.app.service.exceptions.DateAdderDoesntExistException;
 import com.project.app.entities.instrument.frequency.Frequency;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,11 +29,11 @@ public class DateAdderInstanceHolder {
 
     public static DateAdder getDateAdder(final Frequency frequency) {
         String freqLowerCase = frequency.getName().toLowerCase();
-        try {
-            return Objects.requireNonNull(FREQUENCY_MAP.get(freqLowerCase));
-        } catch (NullPointerException ex) {
+        DateAdder dateAdder = FREQUENCY_MAP.get(freqLowerCase);
+        if (dateAdder == null) {
             throw new DateAdderDoesntExistException();
         }
+        return dateAdder;
     }
 
 }

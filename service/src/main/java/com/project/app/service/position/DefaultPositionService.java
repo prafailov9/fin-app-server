@@ -45,8 +45,7 @@ public class DefaultPositionService implements PositionService {
         try {
 
             PositionDto dto = positionDao.loadById(id);
-            Position entity = positionConverter.convertToEntity(dto);
-            return entity;
+            return positionConverter.convertToEntity(dto);
         } catch (NoRecordFoundException | NullIdException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
         }

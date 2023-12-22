@@ -4,14 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- *
- * @author prafailov
  * @param <K>
  * @param <V>
+ * @author prafailov
  */
 public class JsonMapParser<K, V> {
 
@@ -20,18 +20,15 @@ public class JsonMapParser<K, V> {
     }.getType();
 
     public String toJsonString(Map<K, V> map) {
-        String json = gson.toJson(map, mapType);
-        return json;
+        return gson.toJson(map, mapType);
     }
 
     public JsonElement toJsonElement(Map<K, V> map) {
-        JsonElement je = gson.toJsonTree(map, mapType);
-        return je;
+        return gson.toJsonTree(map, mapType);
     }
 
     public Map<K, V> toMap(String jsonString) {
-        Map<K, V> results = gson.fromJson(jsonString, mapType);
-        return results;
+        return gson.fromJson(jsonString, mapType);
     }
 
 }

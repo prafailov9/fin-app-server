@@ -30,8 +30,6 @@ public class CreditCalculator implements Calculator<CreditResultObject> {
 
     /**
      * Method to calculate the interest and principal payments on given position.
-     * @param position
-     * @return
      */
     @Override
     public CreditResultObject calculateCashFlow(Position position) {
