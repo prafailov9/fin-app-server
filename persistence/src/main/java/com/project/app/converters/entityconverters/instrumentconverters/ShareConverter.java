@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  *
  * @author p.rafailov
  */
-public class ShareConverter extends InstrumentConverter<Share, InstrumentDto> {
+public class ShareConverter extends InstrumentConverter<Share> {
 
     // share: instrumentName, startOfPaymentPeriod, endOfPaymentPeriod
     @Override

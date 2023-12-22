@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  *
  * @author p.rafailov
  */
-public class CreditInstrumentConverter extends InstrumentConverter<CreditInstrument, InstrumentDto> {
+public class CreditInstrumentConverter extends InstrumentConverter<CreditInstrument> {
 
     @Override
     public InstrumentDto convertToDto(CreditInstrument entity) {

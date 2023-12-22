@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class PositionConverter implements EntityConverter<Position, PositionDto> {
 
     private final InstrumentConverterFactory instrumentConverterFactory;
-    private InstrumentConverter<Instrument, InstrumentDto> instrumentConverter;
+    private InstrumentConverter<Instrument> instrumentConverter;
 
     public PositionConverter() {
         instrumentConverterFactory = new InstrumentConverterFactory();

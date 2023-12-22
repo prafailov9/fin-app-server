@@ -1,19 +1,20 @@
 package com.project.app.converters.entityconverters.instrumentconverters;
 
 import com.project.app.converters.entityconverters.EntityConverter;
+import com.project.app.dtos.instrument.InstrumentDto;
 
 /**
  *
  * @author p.rafailov
- * @param <Instrument>
- * @param <InstrumentDto>
+ * @param <E>
+ * @param <D>
  */
-public abstract class InstrumentConverter<Instrument, InstrumentDto> implements EntityConverter<Instrument, InstrumentDto> {
+public abstract class InstrumentConverter<E> implements EntityConverter<E, InstrumentDto> {
 
     @Override
-    public abstract Instrument convertToEntity(InstrumentDto dto);
+    public abstract E convertToEntity(InstrumentDto dto);
 
     @Override
-    public abstract InstrumentDto convertToDto(Instrument entity);
+    public abstract InstrumentDto convertToDto(E entity);
 
 }
