@@ -44,7 +44,7 @@ public abstract class InstrumentValidator<Instrument> extends CrudValidator<Inst
         Pair<LocalDateTime, LocalDateTime> datesPair = getStartEndDates(entity);
 
         getValidator().validate(obj -> datesPair.getKey().isBefore(datesPair.getValue())
-                && !getInstrumentName(entity).equals(""), new InvalidInstrumentStateBeforeCalculationException());
+                && !getInstrumentName(entity).isEmpty(), new InvalidInstrumentStateBeforeCalculationException());
     }
 
     @Override

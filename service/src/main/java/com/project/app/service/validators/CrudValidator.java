@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public abstract class CrudValidator<T> {
 
-    private GenericValidator<T> validator;
+    private final GenericValidator<T> validator;
 
     public CrudValidator(T entity) {
         validator = GenericValidator.of(entity);

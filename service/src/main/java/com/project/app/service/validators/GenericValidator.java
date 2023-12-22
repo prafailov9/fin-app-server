@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 public class GenericValidator<T> {
 
     private T object;
-    private List<Throwable> exceptions;
+    private final List<Throwable> exceptions;
 
     private GenericValidator(T object) {
         this.object = object;

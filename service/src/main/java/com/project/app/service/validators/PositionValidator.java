@@ -31,7 +31,7 @@ public class PositionValidator extends CrudValidator<Position> implements Calcul
     @Override
     public void onCalculation(Position entity) {
         getValidator().setObject(entity);
-        getValidator().validate(pos -> onCalc(pos),
+        getValidator().validate(this::onCalc,
                 new InvalidPositionStateBeforeCalculationException());
     }
 

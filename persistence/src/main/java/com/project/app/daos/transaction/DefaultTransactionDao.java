@@ -20,9 +20,7 @@ import java.util.List;
 public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> implements TransactionDao {
 
     protected static final Logger log = LoggerFactory.getLogger(DefaultTransactionDao.class);
-
     private static final String TABLE_NAME = "transactions";
-
     private final static String LOAD_ALL_BY_FK_QUERY = "select * from %s where %s=?";
     private final static String INSERT_WITH_FK_SQL = "INSERT INTO transactions VALUES (%s)";
 
@@ -90,7 +88,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     @Override
     protected PreparedStatement prepareUpdate(TransactionDto entity, Connection connection) throws PrepareStatementFailedException, SQLException {
         String sql = "update " + tableName + " set id=?, amount=?, sign=?, transaction_date=?, fk_position=? where id=" + entity.getId() + ";";
-        log.info("Update query: {}", sql);
+        log.info("Update: {}", sql);
 
         return initPreparedStatement(sql, connection, pst -> {
             pst.setLong(1, entity.getId());
@@ -104,7 +102,7 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
     @Override
     protected String buildInsertQueryWithForeignKeys(TransactionDto entity) {
         if (entity.getPosition() == null) {
-            throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
+            throw new RuntimeException(String.format("Cannot save transaction %s without an position_id", entity));
         }
         String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
         log.info("Built insert query: {}", insertQuery);

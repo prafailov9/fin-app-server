@@ -1,7 +1,7 @@
 package com.project.app.service.validators;
 
-import com.project.app.service.exceptions.calcvalidation.InvalidInstrumentStateBeforeCalculationException;
 import com.project.app.entities.instrument.DepositInstrument;
+import com.project.app.service.exceptions.calcvalidation.InvalidInstrumentStateBeforeCalculationException;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +27,7 @@ public class DepositInstrumentValidator extends InstrumentValidator<DepositInstr
 
     @Override
     protected Pair<LocalDateTime, LocalDateTime> getStartEndDates(DepositInstrument entity) {
-        return Pair.createPair(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
+        return Pair.of(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
     }
 
     @Override

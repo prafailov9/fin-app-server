@@ -31,7 +31,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
     public T save(final T entity) {
         requireNotExists(entity);
         if (containsReference(entity)) {
-            return saveWithReference(entity);
+            return saveWithForeignKeys(entity);
         }
         return plainSave(entity);
     }
@@ -147,7 +147,7 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
      * @return preparedStatement
      * @throws PrepareStatementFailedException -
      */
-    protected PreparedStatement initPreparedStatement(final String sql, Connection connection, PreparedStatementBinder binder) throws SQLException {
+    protected PreparedStatement initPreparedStatement(final String sql, Connection connection, ParameterBinder binder) throws SQLException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
@@ -160,6 +160,46 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             String error = String.format("Error during preparing sql statement %s", sql);
             log.error(error, ex);
             throw new PrepareStatementFailedException(error, ex.getCause());
+        }
+    }
+
+    private T saveWithForeignKeys(T entity) {
+        String query = buildInsertQueryWithForeignKeys(entity);
+        return runSave(entity, query);
+    }
+
+    private T plainSave(T entity) {
+        String query = String.format(INSERT_QUERY, tableName, entity.toString());
+        return runSave(entity, query);
+    }
+
+    private T runSave(T entity, String query) {
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet keys = null;
+        try {
+            conn = getConnection();
+            log.info("Query: {}", query);
+            pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pst.executeUpdate();
+            keys = pst.getGeneratedKeys();
+            if (keys.next()) {
+                Long id = keys.getLong(1);
+                setEntityId(entity, id);
+            }
+        } catch (SQLException ex) {
+            log.error("Could not create a record in {}", tableName, ex);
+            throw new SaveForEntityFailedException();
+        } finally {
+            closeResources(keys, pst, conn);
+        }
+        return entity;
+    }
+
+    private void requireNotExists(T entity) {
+        Long id = entity.getId();
+        if (id != null) {
+            throw new EntityAlreadyExistsException(String.format("Entity from %s already exists whit id = %s", tableName, id));
         }
     }
 
@@ -186,46 +226,6 @@ public abstract class AbstractGenericDao<T extends Entity> implements GenericDao
             log.error("Failed to close resources", ex);
             throw new FailedToCloseDBResourcesException(ex);
         }
-    }
-
-    private T saveWithReference(T entity) {
-        String query = buildInsertQueryWithForeignKeys(entity);
-        return runSave(entity, query);
-    }
-
-    private T plainSave(T entity) {
-        String query = String.format(INSERT_QUERY, tableName, entity.toString());
-        return runSave(entity, query);
-    }
-
-    private void requireNotExists(T entity) {
-        Long id = entity.getId();
-        if (id != null) {
-            throw new EntityAlreadyExistsException(String.format("Entity from %s already exists whit id = %s", tableName, id));
-        }
-    }
-
-    private T runSave(T entity, String query) {
-        Connection conn = null;
-        PreparedStatement pst = null;
-        ResultSet keys = null;
-        try {
-            conn = getConnection();
-            log.info("Query: {}", query);
-            pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pst.executeUpdate();
-            keys = pst.getGeneratedKeys();
-            if (keys.next()) {
-                Long id = keys.getLong(1);
-                setEntityId(entity, id);
-            }
-        } catch (SQLException ex) {
-            log.error("Could not create a record in {}", tableName, ex);
-            throw new SaveForEntityFailedException();
-        } finally {
-            closeResources(keys, pst, conn);
-        }
-        return entity;
     }
 
 }

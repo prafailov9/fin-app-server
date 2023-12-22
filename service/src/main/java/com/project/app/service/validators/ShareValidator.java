@@ -20,7 +20,7 @@ public class ShareValidator extends InstrumentValidator<Share> {
 
     @Override
     protected Pair<LocalDateTime, LocalDateTime> getStartEndDates(Share entity) {
-        return Pair.createPair(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
+        return Pair.of(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
     }
 
     @Override

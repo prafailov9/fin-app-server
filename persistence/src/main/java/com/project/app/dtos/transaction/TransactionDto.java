@@ -65,13 +65,10 @@ public class TransactionDto implements Entity {
     }
 
     public String getDataAsString() {
-        String txString = toString();
         if (position == null || position.getId() == null) {
-            return txString;
+            return toString();
         }
-
-        txString = String.format("%s, %s", txString, position.getId());
-        return txString;
+        return String.format("%s, %s", this, position.getId());
     }
 
     @Override

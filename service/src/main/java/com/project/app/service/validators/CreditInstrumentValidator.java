@@ -27,7 +27,7 @@ public class CreditInstrumentValidator extends InstrumentValidator<CreditInstrum
 
     @Override
     protected Pair<LocalDateTime, LocalDateTime> getStartEndDates(CreditInstrument entity) {
-        return Pair.createPair(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
+        return Pair.of(entity.getStartOfPaymentPeriod(), entity.getEndOfPaymentPeriod());
     }
 
     @Override

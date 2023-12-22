@@ -19,7 +19,7 @@ public class PositionDto implements Entity {
     }
 
     public PositionDto(Timestamp dealStartingDate, String payer, String receiver, double principal,
-            double positionVolume, InstrumentDto instrument) {
+                       double positionVolume, InstrumentDto instrument) {
         this.dealStartingDate = dealStartingDate;
         this.payer = payer;
         this.receiver = receiver;
@@ -86,16 +86,13 @@ public class PositionDto implements Entity {
 
     /**
      * Lists formatted data for sql queries. has additional check if instrument reference exists.
+     *
      * @return
      */
     public String getDataAsString() {
-        String positionString = toString();
-        if (instrument == null || instrument.getId() == null) {
-            return positionString;
-        }
-
-        positionString = String.format("%s, %s", positionString, instrument.getId());
-        return positionString;
+        return (instrument == null || instrument.getId() == null)
+                ? toString()
+                : String.format("%s, %s", this, instrument.getId());
     }
 
     @Override

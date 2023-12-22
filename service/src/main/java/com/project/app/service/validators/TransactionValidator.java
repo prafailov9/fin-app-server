@@ -16,19 +16,14 @@ public class TransactionValidator extends CrudValidator<Transaction> implements 
     public void validateAll(List<Transaction> transactions) {
         for (Transaction tx : transactions) {
             getValidator().setObject(tx);
-            Predicate<Transaction> validation = t -> {
-                return onCalc(t);
-            };
-            getValidator().validate(validation, new InvalidTransactionStateException());
+            getValidator().validate(this::onCalc, new InvalidTransactionStateException());
         }
     }
 
     @Override
     public void onSave(Transaction entity) {
         getValidator().setObject(entity);
-        getValidator().validate((tx) -> {
-            return Objects.isNull(tx.getId()) && Objects.nonNull(tx.getPosition());
-        },
+        getValidator().validate((tx) -> Objects.isNull(tx.getId()) && Objects.nonNull(tx.getPosition()),
                 new NullPointerException());
     }
 
