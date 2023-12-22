@@ -1,13 +1,8 @@
 package com.project.app.converters.entityconverters.instrumentconverters;
 
-import com.project.app.converters.entityconverters.instrumentconverters.CreditInstrumentConverter;
-import com.project.app.converters.entityconverters.instrumentconverters.DepositInstrumentConverter;
-import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverter;
-import com.project.app.converters.entityconverters.instrumentconverters.ShareConverter;
-import com.project.app.entities.instrument.Instrument;
 import com.project.app.exceptions.EntityConverterNotFoundException;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * @author p.rafailov
