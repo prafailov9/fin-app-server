@@ -19,8 +19,7 @@ public class InstrumentConverterFactory {
     static {
         CONVERTER_MAP = Map.of("credit", new CreditInstrumentConverter(),
                 "deposit", new DepositInstrumentConverter(),
-                "share", new ShareConverter()
-        );
+                "share", new ShareConverter());
     }
 
 

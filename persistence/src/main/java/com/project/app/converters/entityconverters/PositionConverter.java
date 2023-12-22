@@ -1,6 +1,5 @@
 package com.project.app.converters.entityconverters;
 
-import com.project.app.converters.entityconverters.instrumentconverters.IC;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverter;
 import com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory;
 import com.project.app.dtos.instrument.InstrumentDto;
