@@ -15,6 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory.getConverter;
+import static java.lang.String.format;
+
 /**
  * @author p.rafailov
  */
@@ -32,7 +35,7 @@ public class DefaultInstrumentService implements InstrumentService {
     @Override
     public void insertInstrument(Instrument instrument) {
         try {
-            instrumentConverter = InstrumentConverterFactory.getConverter(instrument.getType());
+            instrumentConverter = getConverter(instrument.getType());
             InstrumentDto dto = instrumentConverter.convertToDto(instrument);
             instrumentDao.save(dto);
             instrument.setId(dto.getId()); // non-null id = persisted in the database.
@@ -43,16 +46,14 @@ public class DefaultInstrumentService implements InstrumentService {
 
     @Override
     public Instrument getInstrument(Long id) {
-        Instrument instrument;
-        try {
-            InstrumentDto dto = instrumentDao.loadById(id);
-            instrumentConverter = InstrumentConverterFactory.getConverter(dto.getIntrumentType());
-            instrument = instrumentConverter.convertToEntity(dto);
-        } catch (NoRecordFoundException | NullIdException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
-            throw ex;
-        }
-        return instrument;
+        InstrumentDto dto = instrumentDao.loadById(id)
+                .orElseThrow(() -> {
+                    String message = format("Instrument not found for id: %s", id);
+                    LOGGER.log(Level.SEVERE, message);
+                    return new NotFoundException(message);
+                });
+
+        return getConverter(dto.getIntrumentType()).convertToEntity(dto);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class DefaultInstrumentService implements InstrumentService {
             instrumentDao
                     .loadAll()
                     .forEach(dto -> {
-                        instrumentConverter = InstrumentConverterFactory.getConverter(dto.getIntrumentType());
+                        instrumentConverter = getConverter(dto.getIntrumentType());
                         Instrument entity = instrumentConverter.convertToEntity(dto);
                         instruments.add(entity);
                     });
@@ -76,7 +77,7 @@ public class DefaultInstrumentService implements InstrumentService {
     @Override
     public void deleteInstrument(Instrument instrument) {
         try {
-            instrumentConverter = InstrumentConverterFactory.getConverter(instrument.getType());
+            instrumentConverter = getConverter(instrument.getType());
             InstrumentDto dto = instrumentConverter.convertToDto(instrument);
             instrumentDao.delete(dto);
             instrument.setId(null); // null id = not persisted in database.
@@ -89,7 +90,7 @@ public class DefaultInstrumentService implements InstrumentService {
     @Override
     public void updateInstrument(Instrument instrument) {
         try {
-            instrumentConverter = InstrumentConverterFactory.getConverter(instrument.getType());
+            instrumentConverter = getConverter(instrument.getType());
             InstrumentDto dto = instrumentConverter.convertToDto(instrument);
             instrumentDao.update(dto);
         } catch (NoSuchEntityException | EntityConverterNotFoundException ex) {
@@ -100,7 +101,7 @@ public class DefaultInstrumentService implements InstrumentService {
 
     @Override
     public List<Instrument> getAllInstrumentsByType(String type) {
-        instrumentConverter = InstrumentConverterFactory.getConverter(type);
+        instrumentConverter = getConverter(type);
         return instrumentDao.loadAllByType(type)
                 .stream()
                 .map(instrumentConverter::convertToEntity)

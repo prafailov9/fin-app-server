@@ -11,8 +11,11 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import org.junit.After;
+
+import static com.project.app.converters.entityconverters.instrumentconverters.InstrumentConverterFactory.getConverter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -53,8 +56,7 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
     @Test
     public void convertAndSaveTest() {
         Instrument entity = new Share(null, "shareInst", LocalDateTime.now(), LocalDateTime.now());
-        InstrumentConverter conv
-                = InstrumentConverterFactory.getConverter(entity.getType());
+        InstrumentConverter conv = getConverter(entity.getType());
         InstrumentDto dto = conv.convertToDto(entity);
         insDao.save(dto);
         assertNotNull(dto.getId());
@@ -63,10 +65,10 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
     @Test
     public void loadByIdTest() {
         Long id = getRandomId();
-        InstrumentDto dto = insDao.loadById(id);
+        InstrumentDto dto = loadInstrument(id);
+
         LOGGER.log(Level.INFO, "Loaded Dto : {0}", dto);
-        boolean actual = Objects.nonNull(dto);
-        assertTrue(actual);
+        assertEquals(id, dto.getId());
     }
 
     @Test
@@ -79,8 +81,8 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
 
     @Test
     public void deleteInstrumentTest() {
-        Long randomId = getRandomId();
-        InstrumentDto inst = insDao.loadById(randomId);
+        Long id = getRandomId();
+        InstrumentDto inst = loadInstrument(id);
         insDao.delete(inst);
         LOGGER.log(Level.INFO, "Deleted record: {0}", inst.toString());
         assertNull(inst.getId());
@@ -89,12 +91,12 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
     @Test
     public void updateTest() {
         Long id = getRandomId();
-        InstrumentDto dto = insDao.loadById(id);
+        InstrumentDto dto = loadInstrument(id);
         String expected = "ddadasdasdasdasdasd";
         dto.setInstrumentName(expected);
         dto.setInterestRate(231312321);
         insDao.update(dto);
-        InstrumentDto updatedIns = insDao.loadById(id);
+        InstrumentDto updatedIns = loadInstrument(id);
         String actual = updatedIns.getInstrumentName();
         LOGGER.log(Level.INFO, "Updated record: {0}", updatedIns.toString());
         assertEquals(expected, actual);
@@ -109,6 +111,12 @@ public class InstrumentDaoTest extends AbstractGenericDaoTest<InstrumentDto> {
         boolean actual = credits.stream().allMatch(dto -> dto.getIntrumentType().equalsIgnoreCase(type));
         assertTrue(actual);
 
+    }
+
+    private InstrumentDto loadInstrument(Long id) {
+        Optional<InstrumentDto> opt = insDao.loadById(id);
+        assertTrue(opt.isPresent());
+        return opt.get();
     }
 
     @Override

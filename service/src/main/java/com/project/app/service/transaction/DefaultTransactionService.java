@@ -13,8 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 /**
- *
  * @author p.rafailov
  */
 public class DefaultTransactionService implements TransactionService {
@@ -42,13 +43,13 @@ public class DefaultTransactionService implements TransactionService {
 
     @Override
     public Transaction getTransaction(Long id) {
-        try {
-            TransactionDto dto = transactionDao.loadById(id);
-            return transactionConverter.convertToEntity(dto);
-        } catch (NoRecordFoundException | NullIdException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
-        }
-        return null;
+        TransactionDto dto = transactionDao.loadById(id)
+                .orElseThrow(() -> {
+                    String message = format("Transaction not found for id: %s", id);
+                    LOGGER.log(Level.SEVERE, message);
+                    return new NotFoundException(message);
+                });
+        return transactionConverter.convertToEntity(dto);
     }
 
     @Override

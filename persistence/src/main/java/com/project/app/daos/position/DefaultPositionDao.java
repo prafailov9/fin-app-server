@@ -5,6 +5,7 @@ import com.project.app.daos.instrument.InstrumentDao;
 import com.project.app.dtos.instrument.InstrumentDto;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.exceptions.EntityAlreadyExistsException;
+import com.project.app.exceptions.NotFoundException;
 import com.project.app.exceptions.PrepareStatementFailedException;
 import com.project.app.factory.DaoInstanceHolder;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.String.format;
 
 public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implements PositionDao {
 
@@ -51,7 +54,7 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         ResultSet rs = null;
         try {
             conn = getConnection();
-            String query = String.format(LOAD_ALL_BY_FK_QUERY, tableName, "fk_instrument");
+            String query = format(LOAD_ALL_BY_FK_QUERY, tableName, "fk_instrument");
             pst = initPreparedStatement(query, conn, preparedStatement -> {
                if (preparedStatement != null) {
                    preparedStatement.setLong(1, fk);
@@ -87,7 +90,12 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
         pos.setPositionVolume(rs.getDouble("position_volume"));
         Long fk = rs.getLong("fk_instrument");
 
-        InstrumentDto inst = instrumentDao.loadById(fk);
+        InstrumentDto inst = instrumentDao.loadById(fk).orElseThrow(() -> {
+            String err = format("Instrument not found for ID: %s", fk);
+            log.error(err);
+            return new NotFoundException(err);
+        });
+
         pos.setInstrument(inst);
 
         return pos;
@@ -127,10 +135,10 @@ public class DefaultPositionDao extends AbstractGenericDao<PositionDto> implemen
     protected String buildInsertQueryWithForeignKeys(PositionDto entity) {
         // check if fk is null
         if (entity.getInstrument() == null || entity.getInstrument().getId() == null) {
-            throw new RuntimeException(String.format("Cannot save position %s without an instrument_id", entity));
+            throw new RuntimeException(format("Cannot save position %s without an instrument_id", entity));
         }
 
-        String insertQuery = String.format(INSERT_WITH_FK_SQL, entity.getDataAsString());
+        String insertQuery = format(INSERT_WITH_FK_SQL, entity.getDataAsString());
         log.info("Built insert query: {}", insertQuery);
 
         return insertQuery;

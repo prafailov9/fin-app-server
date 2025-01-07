@@ -5,6 +5,8 @@ import com.project.app.dtos.instrument.InstrumentDto;
 
 import java.sql.Timestamp;
 
+import static java.lang.String.format;
+
 public class PositionDto implements Entity {
     private Long id;
     private Timestamp dealStartingDate;
@@ -92,12 +94,12 @@ public class PositionDto implements Entity {
     public String getDataAsString() {
         return (instrument == null || instrument.getId() == null)
                 ? toString()
-                : String.format("%s, %s", this, instrument.getId());
+                : format("%s, %s", this, instrument.getId());
     }
 
     @Override
     public String toString() {
-        return String.format("%s, '%s', '%s', '%s', %s, %s",
+        return format("%s, '%s', '%s', '%s', %s, %s",
                 id, dealStartingDate, payer, receiver, principal, positionVolume);
     }
 

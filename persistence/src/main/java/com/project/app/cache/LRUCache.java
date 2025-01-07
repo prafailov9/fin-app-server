@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 public class LRUCache<K, V> implements Cache<K, V> {
 
     private final int capacity;
@@ -26,7 +28,7 @@ public class LRUCache<K, V> implements Cache<K, V> {
     @Override
     public synchronized void put(K key, V value) {
         if (key == null || value == null) {
-            throw  new IllegalArgumentException("key or value cannot be null!");
+            throw new IllegalArgumentException("key or value cannot be null!");
         }
         cache.put(key, value);
     }
@@ -36,6 +38,6 @@ public class LRUCache<K, V> implements Cache<K, V> {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
-        return Optional.ofNullable(cache.get(key));
+        return ofNullable(cache.get(key));
     }
 }

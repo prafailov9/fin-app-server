@@ -16,6 +16,13 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import static com.project.app.Main.BASE_URI;
+import static com.project.app.Main.startServer;
+import static com.project.app.coredb.DatabaseBuilder.dropDatabase;
+import static jakarta.ws.rs.client.ClientBuilder.newClient;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+
 /**
  *
  * @author p.rafailov
@@ -35,30 +42,26 @@ public abstract class AbstractResourceTest {
             DatabaseBuilder.buildDatabase();
             DatabaseBuilder.insertData();
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error occured while building test database!", ex);
+            LOGGER.log(SEVERE, "Error occured while building test database!", ex);
         }
-        LOGGER.log(Level.INFO, "IN SET UP ABSTRACT CLASS!");
+        LOGGER.log(INFO, "IN SET UP ABSTRACT CLASS!");
         // start the server
-        server = Main.startServer();
+        server = startServer();
         // create the client
-        Client c = ClientBuilder.newClient();
-        target = c.target(Main.BASE_URI);
+        Client c = newClient();
+        target = c.target(BASE_URI);
 
     }
 
     @AfterClass
     public static void tearDownClass() {
         try {
-            LOGGER.log(Level.INFO, "IN TEAR DOWN ABSTRACT CLASS!");
-            DatabaseBuilder.dropDatabase();
+            LOGGER.log(INFO, "IN TEAR DOWN ABSTRACT CLASS!");
+            dropDatabase();
             server.shutdownNow();
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error occurred while dropping test database!", ex);
+            LOGGER.log(SEVERE, "Error occurred while dropping test database!", ex);
         }
-    }
-
-    protected HttpServer getHttpServer() {
-        return server;
     }
 
     protected WebTarget getWebTarget() {

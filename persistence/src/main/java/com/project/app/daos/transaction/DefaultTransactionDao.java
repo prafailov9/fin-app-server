@@ -4,6 +4,7 @@ import com.project.app.coredb.AbstractGenericDao;
 import com.project.app.daos.position.PositionDao;
 import com.project.app.dtos.position.PositionDto;
 import com.project.app.dtos.transaction.TransactionDto;
+import com.project.app.exceptions.NotFoundException;
 import com.project.app.exceptions.PrepareStatementFailedException;
 import com.project.app.exceptions.SaveForEntityFailedException;
 import com.project.app.factory.DaoInstanceHolder;
@@ -67,7 +68,15 @@ public class DefaultTransactionDao extends AbstractGenericDao<TransactionDto> im
         tx.setAmount(rs.getDouble("amount"));
         tx.setSign(rs.getInt("sign"));
         tx.setTransactionDate(rs.getTimestamp("transaction_date"));
-        PositionDto pos = positionDao.loadById(rs.getLong("fk_position"));
+
+        Long fk = rs.getLong("fk_position");
+        PositionDto pos = positionDao.loadById(fk)
+                .orElseThrow(() -> {
+                    String err = String.format("Position not found for ID: %s", fk);
+                    log.error(err);
+                    return new NotFoundException(err);
+                });
+
         tx.setPosition(pos);
         return tx;
     }

@@ -14,9 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class DaoInstanceHolder {
 
-    private static final ConcurrentHashMap<Class<? extends GenericDao<? extends Entity>>, GenericDao<? extends Entity>> DAO_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<? extends GenericDao<? extends Entity>>, GenericDao<? extends Entity>> DAO_CACHE;
 
     static {
+        DAO_CACHE = new ConcurrentHashMap<>();
+
         DAO_CACHE.put(InstrumentDao.class, new DefaultInstrumentDao());
         DAO_CACHE.put(PositionDao.class, new DefaultPositionDao());
         DAO_CACHE.put(TransactionDao.class, new DefaultTransactionDao());

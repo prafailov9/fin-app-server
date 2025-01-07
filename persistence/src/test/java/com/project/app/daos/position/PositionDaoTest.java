@@ -8,6 +8,7 @@ import com.project.app.dtos.position.PositionDto;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +47,8 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
     @Test
     public void savePositionTest() {
         Long id = getRandomId();
-        PositionDto dto = posDao.loadById(id);
+        PositionDto dto = loadPosition(id);
+
         dto.setId(null);
         posDao.save(dto); // works because no unique data except id
         LOGGER.log(Level.INFO, "Saved record: {0}", dto.toString());
@@ -58,7 +60,7 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
     @Test
     public void savePositionWithFKTest() {
         // instrument should already exist
-        InstrumentDto ins = insDao.loadById(1L);
+        InstrumentDto ins = loadInstrument(1L);
         PositionDto pos = new PositionDto(Timestamp.valueOf(LocalDateTime.now()),
                 "payer", "receiver", 0, 3, ins);
         PositionDto saved = posDao.save(pos);
@@ -91,7 +93,7 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
     @Test
     public void loadByIdTest() {
         Long id = getRandomId();
-        PositionDto dto = posDao.loadById(id);
+        PositionDto dto = loadPosition(id);
         LOGGER.log(Level.ALL, "Loaded record: {0}", dto.toString());
         assertNotNull(dto);
         assertNotNull(dto.getId());
@@ -110,7 +112,7 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
     @Test
     public void deleteTest() {
         Long id = getRandomId();
-        PositionDto pos = posDao.loadById(id);
+        PositionDto pos = loadPosition(id);
         posDao.delete(pos);
         LOGGER.log(Level.INFO, "Deleted record: {0}", pos.toString());
         assertNull(pos.getId());
@@ -119,18 +121,18 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
     @Test
     public void updatePositionTest() {
         Long id = getRandomId();
-        PositionDto dto = posDao.loadById(id);
+        PositionDto dto = loadPosition(id);
         dto.setPayer("dsdsd");
         dto.setPrincipal(213);
         posDao.update(dto);
-        PositionDto updatedPos = posDao.loadById(id);
+        PositionDto updatedPos = loadPosition(id);
         LOGGER.log(Level.INFO, "Updated record: {0}", updatedPos.toString());
         assertEquals(updatedPos.getPayer(), dto.getPayer());
     }
 
     @Test
     public void loadAllPositionsByReferenceTest() {
-        Long fk = posDao.loadById(getRandomId()).getInstrument().getId();
+        Long fk = loadPosition(getRandomId()).getInstrument().getId();
         List<PositionDto> dtos = posDao.loadAllByReference(fk);
         boolean actual = dtos.stream().allMatch(pos -> pos.getInstrument().getId().equals(fk));
         assertTrue(actual);
@@ -138,13 +140,27 @@ public class PositionDaoTest extends AbstractGenericDaoTest<PositionDto> {
 
     @Test
     public void loadAllByTypeOfReferenceTest() {
-        InstrumentDto ins = posDao.loadById(getRandomId()).getInstrument();
+        InstrumentDto ins = loadPosition(getRandomId()).getInstrument();
         List<PositionDto> dtos = posDao.loadAllByInstrumentType(ins);
         assertNotNull(dtos);
 
         boolean actual = dtos.stream().allMatch(dto -> dto.getInstrument().getIntrumentType().equalsIgnoreCase(ins.getIntrumentType()));
         assertTrue(actual);
         // select * from positions where (select id from instruments where instrument_type='credit') >=0
+    }
+
+    private PositionDto loadPosition(Long id) {
+        Optional<PositionDto> opt = posDao.loadById(id);
+        assertTrue(opt.isPresent());
+
+        return opt.get();
+    }
+
+    private InstrumentDto loadInstrument(Long id) {
+        Optional<InstrumentDto> opt = insDao.loadById(id);
+        assertTrue(opt.isPresent());
+
+        return opt.get();
     }
 
     @Override

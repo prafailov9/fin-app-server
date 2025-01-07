@@ -3,6 +3,7 @@ package com.project.app.coredb;
 import com.project.app.dtos.Entity;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -22,7 +23,7 @@ public interface GenericDao<T extends Entity> {
      * @param id
      * @return
      */
-    T loadById(final Long id);
+    Optional<T> loadById(final Long id);
 
     /**
      *

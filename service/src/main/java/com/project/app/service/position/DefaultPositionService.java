@@ -11,10 +11,11 @@ import com.project.app.factory.DaoInstanceHolder;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author p.rafailov
  */
 public class DefaultPositionService implements PositionService {
@@ -42,28 +43,25 @@ public class DefaultPositionService implements PositionService {
 
     @Override
     public Position getPosition(Long id) {
-        try {
+        PositionDto dto = positionDao.loadById(id)
+                .orElseThrow(() -> {
+                    String message = format("Position not found for id: %s", id);
+                    LOGGER.log(Level.SEVERE, message);
+                    return new NotFoundException(message);
+                });
 
-            PositionDto dto = positionDao.loadById(id);
-            return positionConverter.convertToEntity(dto);
-        } catch (NoRecordFoundException | NullIdException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
-        }
-        return null;
+        return positionConverter.convertToEntity(dto);
     }
 
     @Override
     public List<Position> getAllPositions() {
-        try {
-            return positionDao
-                    .loadAll()
-                    .stream()
-                    .map(positionConverter::convertToEntity)
-                    .collect(Collectors.toList());
-        } catch (EntityConverterNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
+        List<PositionDto> dtos = positionDao.loadAll();
+        if (dtos.isEmpty()) {
+            throw new NotFoundException("No positions found!");
         }
-        return null;
+        return dtos.stream()
+                .map(positionConverter::convertToEntity)
+                .collect(toList());
     }
 
     @Override
@@ -89,8 +87,10 @@ public class DefaultPositionService implements PositionService {
 
     @Override
     public List<Position> getAllPositionsByInstrument(Instrument instrument) {
-        List<Position> positionsByInstrument = positionDao.loadAllByReference(instrument.getId()).stream().map(positionConverter::convertToEntity).collect(Collectors.toList());
-        return positionsByInstrument;
+        return positionDao.loadAllByReference(instrument.getId())
+                .stream()
+                .map(positionConverter::convertToEntity)
+                .collect(toList());
     }
 
 }

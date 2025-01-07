@@ -27,9 +27,8 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
 
     @Override
     public List<InstrumentDto> loadAllByType(final String type) {
-        try {
-            String query = "select * from instruments where instrument_type=?";
-            PreparedStatement pst = getConnection().prepareStatement(query);
+        String query = "select * from instruments where instrument_type=?";
+        try (PreparedStatement pst = getConnection().prepareStatement(query)) {
             pst.setString(1, type);
             ResultSet results = pst.executeQuery();
             return getAllDatabaseResults(results);
@@ -42,8 +41,7 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
     @Override
     public InstrumentDto loadOneByName(final String name) {
         InstrumentDto dto;
-        try {
-            PreparedStatement pst = getConnection().prepareStatement(SELECT_ONE_BY_NAME_QUERY);
+        try (PreparedStatement pst = getConnection().prepareStatement(SELECT_ONE_BY_NAME_QUERY)) {
             pst.setString(1, name);
             ResultSet rs = pst.executeQuery();
             dto = getDatabaseResults(rs);
@@ -59,7 +57,6 @@ public class DefaultInstrumentDao extends AbstractGenericDao<InstrumentDto> impl
         InstrumentDto inst = new InstrumentDto();
         while (rs.next()) {
             inst = getResults(rs);
-
         }
         return inst;
     }

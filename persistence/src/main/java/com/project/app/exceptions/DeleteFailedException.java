@@ -1,2 +1,4 @@
-package com.project.app.exceptions;public class DeleteFailedException {
+package com.project.app.exceptions;
+
+public class DeleteFailedException extends RuntimeException {
 }

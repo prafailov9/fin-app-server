@@ -16,6 +16,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.project.app.exceptions.DatabaseConnectionException.withFailedToRetrieveFromDatasource;
+
 /**
     Lazy-loaded Singleton for caching a DB connection pool. Works with any RDBMS.
  */
@@ -53,9 +55,9 @@ public class DatabaseConnector {
         Connection connection;
         try {
             connection = dataSource.getConnection();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             LOGGER.severe("Could not retrieve connection!");
-            throw DatabaseConnectionException.withFailedToRetrieveFromDatasource(e.getCause());
+            throw withFailedToRetrieveFromDatasource(ex.getCause());
         }
         return connection;
     }
